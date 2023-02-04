@@ -72,6 +72,8 @@ const InvitationRow: React.FC<ApiInvitation> = ({ event_id, slack_id, slack_user
                     padding: 1,
                     display: 'flex',
                     justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 2,
                 }}
             >
                 <Box
@@ -107,11 +109,13 @@ const InvitationRow: React.FC<ApiInvitation> = ({ event_id, slack_id, slack_user
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
+                        flex: 1,
                     }}
                 >
                     <SelectInput
                         name="rsvp"
-                        width={140}
+                        fullWidth={true}
+                        marginLeft={false}
                         items={[
                             { value: 'attending', text: 'attending' },
                             { value: 'not attending', text: 'not attending' },

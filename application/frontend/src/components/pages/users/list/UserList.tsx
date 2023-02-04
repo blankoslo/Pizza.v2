@@ -20,8 +20,6 @@ const UserList: React.FC = () => {
         <Paper
             sx={(theme) => ({
                 height: '100%',
-                width: '30vw',
-                minWidth: '500px',
                 borderRadius: 3,
                 backgroundColor: theme.palette.secondary.main,
                 display: 'flex',

@@ -14,6 +14,7 @@ interface Props {
     marginLeft?: boolean;
     disabled?: boolean;
     width?: number;
+    fullWidth?: boolean;
     variant?: 'outlined' | 'filled' | 'standard';
 }
 
@@ -26,6 +27,7 @@ const TextInput: React.FC<Props> = ({
     disabled = false,
     width,
     variant = 'outlined',
+    fullWidth = false,
 }) => {
     const { control } = useFormContext();
 
@@ -36,7 +38,7 @@ const TextInput: React.FC<Props> = ({
                 marginLeft: marginLeft ? 2 : 0,
                 display: 'flex',
                 flexDirection: 'column',
-                width: width ? `${width}px` : null,
+                width: fullWidth ? '100%' : (width ? `${width}px` : null)
             }}
         >
             <Controller

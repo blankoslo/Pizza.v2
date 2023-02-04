@@ -75,6 +75,7 @@ const UserCard: React.FC<ApiUser> = ({ slack_id, current_username, first_seen, e
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    gap: 2,
                 }}
             >
                 <Box

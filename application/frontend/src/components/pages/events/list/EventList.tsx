@@ -7,12 +7,10 @@ import { EventsContainer } from './EventsContainer';
 const EventList: React.FC = () => (
     <Box
         sx={{
-            width: '30vw',
-            minWidth: '600px',
             height: '100%',
             display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-around',
+            gap: 1,
+            flexWrap: 'wrap',
         }}
     >
         <EventsContainer title="events.list.futureEvents.title">

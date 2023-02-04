@@ -9,6 +9,7 @@ const EvenListPage: React.FC = () => (
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            overflow: 'auto',
         }}
     >
         <EventList />

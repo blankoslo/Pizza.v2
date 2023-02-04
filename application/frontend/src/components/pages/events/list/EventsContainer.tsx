@@ -23,7 +23,7 @@ const EventsContainer: React.FC<Props> = ({ children, title }) => {
     return (
         <Paper
             sx={(theme) => ({
-                height: '40%',
+                flex: 1,
                 borderRadius: 3,
                 backgroundColor: theme.palette.secondary.main,
                 display: 'flex',
@@ -38,6 +38,7 @@ const EventsContainer: React.FC<Props> = ({ children, title }) => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+
                 }}
             >
                 <Typography variant="h5" component="h3">
