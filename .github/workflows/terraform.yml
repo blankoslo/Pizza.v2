@@ -18,15 +18,19 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       - name: Terraform Format
         id: fmt
+        working-directory: ./infrastructure
         run: terraform fmt -check
       - name: Terraform Init
         id: init
+        working-directory: ./infrastructure
         run: terraform init
       - name: Terraform Validate
         id: validate
+        working-directory: ./infrastructure
         run: terraform validate -no-color
       - name: Terraform Plan
         id: plan
+        working-directory: ./infrastructure
         run: terraform plan -no-color -input=false -out=${{ github.workspace }}/tfplanoutput/tf.plan
         continue-on-error: true
       - name: Terraform Plan Status
