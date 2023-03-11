@@ -5,7 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { ApiGroupPost, groupsDefaultQueryKey, useGroupService } from '../../../api/GroupService';
+import { ApiGroup, ApiGroupPost, groupsDefaultQueryKey, useGroupService } from '../../../api/GroupService';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
@@ -30,14 +30,15 @@ const validationSchema = yup.object().shape({
 
 interface Schema {
     name: string;
-    members: Array<{ label: string; value: string; }>
+    members: Array<{ label: string; value: string }>;
 }
 
 interface Props {
+    group?: ApiGroup;
     onSubmitFinished: () => void;
 }
 
-export const GroupCreator: React.FC<Props> = ({ onSubmitFinished }) => {
+export const GroupCreator: React.FC<Props> = ({ onSubmitFinished, group }) => {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
     const { postGroup } = useGroupService();
@@ -45,8 +46,8 @@ export const GroupCreator: React.FC<Props> = ({ onSubmitFinished }) => {
     const formMethods = useForm<Schema>({
         resolver: yupResolver(validationSchema),
         defaultValues: {
-            name: '',
-            members: [],
+            name: group?.name ?? '',
+            members: group?.members.map((member) => ({ label: member.current_username, value: member.slack_id })) ?? [],
         },
     });
 
