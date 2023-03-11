@@ -2,6 +2,7 @@ from app.db import db
 from app.models.slack_user_schema import SlackUserSchema, SlackUserResponseSchema
 from app.models.group import Group
 from app.models.slack_organization_schema import SlackOrganizationSchema
+from app.models.mixins import get_field
 
 from marshmallow import Schema, fields
 from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
@@ -24,3 +25,20 @@ class GroupSchema(SQLAlchemySchema):
 class GroupResponseSchema(GroupSchema):
     class Meta(GroupSchema.Meta):
         exclude = ("slack_organization", "slack_organization_id", "members")
+
+
+class GroupCreateSchema(GroupSchema):
+    class Meta(GroupSchema.Meta):
+        exclude = (
+            "slack_organization",
+            "slack_organization_id",
+            "id",
+        )
+
+
+class GroupUpdateSchema(SQLAlchemySchema):
+    class Meta(GroupSchema.Meta):
+        load_instance = False
+
+    name = get_field(GroupSchema, Group.name)
+    members = get_field(GroupSchema, Group.members)
