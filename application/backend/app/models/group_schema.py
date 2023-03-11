@@ -19,3 +19,8 @@ class GroupSchema(SQLAlchemySchema):
     members = fields.Nested(SlackUserSchema, many=True, dump_only=True)
     slack_organization_id = auto_field()
     slack_organization = fields.Nested(SlackOrganizationSchema, dump_only=True)
+
+
+class GroupResponseSchema(GroupSchema):
+    class Meta(GroupSchema.Meta):
+        exclude = ("slack_organization", "slack_organization_id", "members")

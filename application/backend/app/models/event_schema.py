@@ -2,7 +2,7 @@ from app.db import db
 from app.models.restaurant_schema import RestaurantSchema, RestaurantResponseSchema
 from app.models.enums import Age, RSVP
 from app.models.event import Event
-from app.models.group_schema import GroupSchema
+from app.models.group_schema import GroupSchema, GroupResponseSchema
 from app.models.mixins import get_field
 from app.models.slack_organization_schema import SlackOrganizationSchema
 
@@ -42,6 +42,7 @@ class EventResponseSchema(EventSchema):
         exclude = ("slack_organization", "slack_organization_id")
 
     restaurant = fields.Nested(RestaurantResponseSchema, dump_only=True)
+    group = fields.Nested(GroupResponseSchema, dump_only=True)
 
 
 class EventQueryArgsSchema(Schema):
@@ -66,4 +67,5 @@ class EventCreateSchema(EventSchema):
             "restaurant",
             "finalized",
             "id",
+            "group",
         )
