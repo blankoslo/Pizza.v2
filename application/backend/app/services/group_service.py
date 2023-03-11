@@ -37,6 +37,9 @@ class GroupService:
 
     def delete(self, group_id, team_id):
         group = GroupRepository.get_by_id(group_id)
+        print(group)
 
         if group is not None and group.slack_organization_id == team_id:
             GroupRepository.delete(group_id)
+            return True
+        return False
