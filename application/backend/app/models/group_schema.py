@@ -17,28 +17,29 @@ class GroupSchema(SQLAlchemySchema):
 
     id = auto_field()
     name = auto_field()
-    members = fields.Nested(SlackUserSchema, many=True, dump_only=True)
+    members = fields.Nested(SlackUserSchema, many=True)
     slack_organization_id = auto_field()
     slack_organization = fields.Nested(SlackOrganizationSchema, dump_only=True)
 
 
 class GroupResponseSchema(GroupSchema):
     class Meta(GroupSchema.Meta):
-        exclude = ("slack_organization", "slack_organization_id", "members")
+        exclude = ("slack_organization", "slack_organization_id")
+
+    members = fields.Nested(SlackUserResponseSchema, many=True, dump_only=True)
 
 
-class GroupCreateSchema(GroupSchema):
+class GroupCreateSchema(SQLAlchemySchema):
     class Meta(GroupSchema.Meta):
-        exclude = (
-            "slack_organization",
-            "slack_organization_id",
-            "id",
-        )
+        load_instance = False
+
+    name = fields.String(required=True)
+    members = fields.List(fields.String, required=True)
 
 
 class GroupUpdateSchema(SQLAlchemySchema):
     class Meta(GroupSchema.Meta):
         load_instance = False
 
-    name = get_field(GroupSchema, Group.name)
-    members = get_field(GroupSchema, Group.members)
+    name = fields.String(required=True)
+    members = fields.List(fields.String, required=True)

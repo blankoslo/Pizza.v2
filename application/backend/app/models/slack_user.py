@@ -118,4 +118,4 @@ class SlackUser(CrudMixin, db.Model):
         return query.all()
 
     def __repr__(self):
-        return "<SlackUsers(id={self.id!r})".format(self=self)
+        return "<SlackUsers(id={self.slack_id!r})".format(self=self)

@@ -1,4 +1,6 @@
 from app.models.group_schema import GroupSchema
+from app.models.slack_user import SlackUser
+from app.models.slack_user_schema import SlackUserSchema
 from app.repositories.group_repository import GroupRepository
 
 class GroupService:
@@ -12,8 +14,17 @@ class GroupService:
         return group
 
     def add(self, data, team_id):
-        data.slack_organization_id = team_id
-        return GroupRepository.upsert(data)
+        slack_users = []
+        for slack_user in SlackUser.query.filter(SlackUser.slack_id.in_(data['members'])).filter(SlackUser.slack_organization_id == team_id).all():
+            dumped_slack_user = SlackUserSchema(exclude=['slack_organization']).dump(slack_user)
+            slack_users.append(dumped_slack_user)
+        data = {
+            'name': data["name"],
+            'members': slack_users,
+            'slack_organization_id': team_id,
+        }
+        group = GroupSchema().load(data=data, partial=True)
+        return GroupRepository.upsert(group)
 
     def update(self, group_id, data, team_id):
         group = GroupRepository.get_by_id(group_id)
