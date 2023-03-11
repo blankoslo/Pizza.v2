@@ -1,7 +1,6 @@
 from app.db import db
 from app.models.mixins import get_field, CrudMixin
 from app.models.slack_user import SlackUser
-from app.models.group import Group
 from app.models.slack_organization_schema import SlackOrganizationSchema
 
 from marshmallow import Schema, fields
@@ -22,7 +21,6 @@ class SlackUserSchema(SQLAlchemySchema):
     email = auto_field()
     slack_organization_id = auto_field()
     slack_organization = fields.Nested(SlackOrganizationSchema, dump_only=True)
-    groups = fields.Nested(Group, many=True, dump_only=True)
 
 
 class SlackUserResponseSchema(SlackUserSchema):

@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Table, ForeignKey
+from app.db import db
+from sqlalchemy.dialects.postgresql import UUID
 
-slack_user_group_association_table = Table('slack_user_group_association',
-    Column('slack_user_id', String, ForeignKey('slack_users.slack_id')),
-    Column('group_id', String, ForeignKey('groups.id'))
+slack_user_group_association_table = db.Table('slack_user_group_association',
+    db.Column('slack_user_id', db.String, db.ForeignKey('slack_users.slack_id'), primary_key=True),
+    db.Column('group_id', UUID(as_uuid=True), db.ForeignKey('groups.id'), primary_key=True)
 )
