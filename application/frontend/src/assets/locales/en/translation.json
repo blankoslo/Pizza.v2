@@ -45,6 +45,10 @@
       "images": {
         "name": "images",
         "link": "/images"
+      },
+      "groups": {
+        "name": "groups",
+        "link": "/groups"
       }
     },
     "settings": {
@@ -224,6 +228,55 @@
       "mutation": {
         "onSuccess": "Deletion of restaurant was successful",
         "onError": "Deletion of restaurant failed"
+      }
+    }
+  },
+  "groups": {
+    "new": {
+      "title": "New Group",
+      "validation": {
+        "name": {
+          "min": "The name must be at least 1 letters long",
+          "required": "Name is required"
+        }
+      },
+      "mutation": {
+        "onSuccess": "New group registered",
+        "onError": "Failed to register group"
+      },
+      "form": {
+        "name": "Group name",
+        "button": "Create"
+      }
+    },
+    "usersSelect": {
+      "label": "Group Members"
+    },
+    "list": {
+      "title": "List of Groups",
+      "noResults": "No groups found",
+      "optionalValue": "N/A",
+      "entry": {
+        "name": "Name",
+        "numberOf": "members"
+      },
+      "confirmation": {
+        "title": "Delete group",
+        "content": {
+          "line1": "Are you sure you want to delete this group? ",
+          "line2": "This action cannot be undone."
+        },
+        "action": {
+          "cancel": "Cancel",
+          "accept": "Delete"
+        }
+      },
+      "newGroupButton": "New Group"
+    },
+    "delete": {
+      "mutation": {
+        "onSuccess": "Deletion of group was successful",
+        "onError": "Deletion of group failed"
       }
     }
   }
