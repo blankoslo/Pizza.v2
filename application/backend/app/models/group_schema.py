@@ -1,5 +1,4 @@
 from app.db import db
-from app.models.mixins import get_field, CrudMixin
 from app.models.slack_user_schema import SlackUserSchema, SlackUserResponseSchema
 from app.models.group import Group
 from app.models.slack_organization_schema import SlackOrganizationSchema
