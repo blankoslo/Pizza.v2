@@ -12,6 +12,7 @@ class Group(CrudMixin, db.Model):
     __tablename__ = "groups"
     id = sa.Column(UUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()"))
     name = sa.Column(sa.String, nullable=False)
+    slack_organization_id = sa.Column(sa.String, sa.ForeignKey('slack_organizations.team_id'), nullable=False)
 
     members = relationship(
         "SlackUser",
