@@ -2,6 +2,7 @@ from app.db import db
 from app.models.restaurant_schema import RestaurantSchema, RestaurantResponseSchema
 from app.models.enums import Age, RSVP
 from app.models.event import Event
+from app.models.group import Group
 from app.models.mixins import get_field
 from app.models.slack_organization_schema import SlackOrganizationSchema
 
@@ -25,6 +26,8 @@ class EventSchema(SQLAlchemySchema):
     slack_organization_id = auto_field()
     slack_organization = fields.Nested(SlackOrganizationSchema, dump_only=True)
     people_per_event = auto_field()
+    group_id = auto_field()
+    group = fields.Nested(Group, dump_only=True)
 
     @validates('people_per_event')
     def validate_people_per_event(self, value):

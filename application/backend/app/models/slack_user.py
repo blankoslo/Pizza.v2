@@ -8,6 +8,7 @@ from app.models.mixins import get_field, CrudMixin
 from app.models.event import Event
 from app.models.invitation import Invitation
 from app.models.enums import RSVP
+from app.models.slack_user_group_association import slack_user_group_association_table
 
 
 class SlackUser(CrudMixin, db.Model):
@@ -20,6 +21,11 @@ class SlackUser(CrudMixin, db.Model):
     email = sa.Column(sa.String, nullable=True)
     ratings = relationship("Rating", backref="slack_user", cascade="all, delete-orphan")
     slack_organization_id = sa.Column(sa.String, sa.ForeignKey('slack_organizations.team_id'), nullable=False)
+    groups = db.relationship(
+        "Group",
+        secondary=slack_user_group_association_table,
+        back_populates="members"
+    )
     __table_args__ = (
         sa.CheckConstraint(priority >= 1, name='check_priority_range_min'),
         sa.CheckConstraint(priority <= 10, name='check_priority_range_max'),
