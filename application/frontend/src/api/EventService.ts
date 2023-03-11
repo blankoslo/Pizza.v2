@@ -24,6 +24,7 @@ export interface ApiEvents extends Pagination {
 export interface ApiEventPost extends ApiEventBase {
     restaurant_id: string;
     people_per_event: number;
+    group_id?: string;
 }
 
 export interface ApiEventPatch extends ApiEventBase {

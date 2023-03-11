@@ -252,6 +252,10 @@
     "usersSelect": {
       "label": "Group Members"
     },
+    "groupSelect": {
+      "placeholder": "Group",
+      "label": "Invitation group (only users from this group will get invited)"
+    },
     "list": {
       "title": "List of Groups",
       "noResults": "No groups found",

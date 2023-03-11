@@ -248,6 +248,10 @@
     "usersSelect": {
       "label": "Gruppemedlemmer"
     },
+    "groupSelect": {
+      "placeholder": "Gruppe",
+      "label": "Invitasjonsgruppe (bare medlemmer fra denne gruppen vil bli invitert)"
+    },
     "list": {
       "title": "Liste over grupper",
       "noResults": "Ingen grupper funnet",

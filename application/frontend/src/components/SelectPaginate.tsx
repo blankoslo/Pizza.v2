@@ -21,6 +21,7 @@ type Additional = {
 type IsMulti = boolean;
 
 interface Props {
+    id?: string;
     name: string;
     label: string;
     triggerNames?: string[];
@@ -36,6 +37,7 @@ interface Props {
 }
 
 const SelectPaginate: React.FC<Props> = ({
+    id,
     name,
     label,
     triggerNames,
@@ -120,6 +122,7 @@ const SelectPaginate: React.FC<Props> = ({
             <Controller
                 render={({ field: { ref, ...rest }, formState }) => (
                     <AsyncPaginate
+                        id={id}
                         components={{ DropdownIndicator, IndicatorSeparator }}
                         styles={customStyles(!formState.errors[name])}
                         {...rest}
