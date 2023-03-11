@@ -135,7 +135,7 @@ export const EventCreator: React.FC<Props> = ({ onSubmitFinished }) => {
                         <Checkbox
                             {...formMethods.register('usingGroup')}
                             disableRipple
-                            sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
+                            sx={{ '& .MuiSvgIcon-root': { fontSize: 28 }, padding: 0 }}
                         />
                         <SelectGroup disabled={!usingGroup} />
                     </Box>

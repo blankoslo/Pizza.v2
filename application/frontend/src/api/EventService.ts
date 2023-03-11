@@ -1,6 +1,7 @@
 import { useHttpClient } from './httpClient';
 import { ApiRestaurant } from './RestaurantService';
 import { Pagination, Params } from './types';
+import {ApiGroup} from "./GroupService";
 
 const endpoint = '/events';
 
@@ -15,6 +16,7 @@ export interface ApiEvent extends ApiEventBase {
     finalized: boolean;
     restaurant?: ApiRestaurant;
     people_per_event: number;
+    group?: ApiGroup;
 }
 
 export interface ApiEvents extends Pagination {

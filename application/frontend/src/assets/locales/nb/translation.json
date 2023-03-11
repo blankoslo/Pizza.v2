@@ -169,7 +169,8 @@
       },
       "deletedRestaurant": "N/A (Restauranten har blitt slettet fra systemet)",
       "newEventButton": "Nytt arrangement",
-      "noResults":"Ingen arrangementer funnet"
+      "noResults":"Ingen arrangementer funnet",
+      "group": "Gruppe"
     }
   },
   "restaurants": {

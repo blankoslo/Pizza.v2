@@ -173,7 +173,8 @@
       },
       "deletedRestaurant": "N/A (Restaurant deleted from system)",
       "newEventButton": "New Event",
-      "noResults":"No events found"
+      "noResults":"No events found",
+      "group": "Group"
     }
   },
   "restaurants": {
