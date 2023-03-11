@@ -2,7 +2,7 @@ from app.models.group_schema import GroupSchema
 from app.repositories.group_repository import GroupRepository
 
 class GroupService:
-    def get(self, filters, page, per_page, team_id):
+    def get(self, page, per_page, team_id, filters=None):
         return GroupRepository.get(filters=filters, page=page, per_page=per_page, team_id=team_id)
 
     def get_by_id(self, group_id, team_id=None):
