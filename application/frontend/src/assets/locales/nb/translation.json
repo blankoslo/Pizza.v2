@@ -241,7 +241,7 @@
         "onError": "Registrering av ny gruppe var mislykket"
       },
       "form": {
-        "name": "gruppens navn",
+        "name": "Gruppens navn",
         "button": "Opprett"
       }
     },
@@ -273,6 +273,20 @@
       "mutation": {
         "onSuccess": "Sletting av gruppen var vellykket",
         "onError": "Sletting av gruppen var mislykket"
+      }
+    },
+    "edit": {
+      "mutation": {
+        "onSuccess": "Endring av gruppe var vellykket",
+        "onError": "Endring av gruppe var mislykket"
+      },
+      "title": "Endre gruppe",
+      "form": {
+        "name": "Gruppens navn",
+        "buttons": {
+          "save": "Lagre",
+          "open": "Endre"
+        }
       }
     }
   }

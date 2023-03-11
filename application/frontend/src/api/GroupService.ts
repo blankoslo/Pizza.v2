@@ -1,6 +1,6 @@
 import { useHttpClient } from './httpClient';
 import { Pagination, Params } from './types';
-import {ApiUser} from "./UserService";
+import { ApiUser } from './UserService';
 
 const endpoint = '/groups';
 
@@ -23,6 +23,10 @@ export interface ApiGroupPost extends ApiGroupBase {
     members: string[];
 }
 
+export interface ApiGroupPatch extends ApiGroupBase {
+    members: string[];
+}
+
 export interface ApiGroupsInfinite {
     data: ApiGroup[];
     nextPage: number;
@@ -30,7 +34,7 @@ export interface ApiGroupsInfinite {
 }
 
 export const useGroupService = () => {
-    const { httpGetClient, httpPostClient, httpDeleteClient } = useHttpClient();
+    const { httpGetClient, httpPostClient, httpPatchClient, httpDeleteClient } = useHttpClient();
 
     const getGroups: (params?: Params) => Promise<ApiGroups> = (params = { page: 1, page_size: 10 }) =>
         httpGetClient<Array<ApiGroup>>(endpoint, { params }).then((response) => {
@@ -56,8 +60,10 @@ export const useGroupService = () => {
     const postGroup = (newGroup: ApiGroupPost): Promise<ApiGroup> =>
         httpPostClient<ApiGroup>(endpoint, newGroup).then((response) => response.data);
 
-    const deleteGroup = (groupId: string): Promise<void> =>
-        httpDeleteClient<ApiGroup>(`${endpoint}/${groupId}`).then();
+    const patchGroup = (group: ApiGroupPatch, groupId: string): Promise<ApiGroup> =>
+        httpPatchClient<ApiGroup>(`${endpoint}/${groupId}`, group).then((response) => response.data);
 
-    return { getGroups, getGroupsInfinite, getGroupById, postGroup, deleteGroup };
+    const deleteGroup = (groupId: string): Promise<void> => httpDeleteClient<ApiGroup>(`${endpoint}/${groupId}`).then();
+
+    return { getGroups, getGroupsInfinite, getGroupById, postGroup, patchGroup, deleteGroup };
 };

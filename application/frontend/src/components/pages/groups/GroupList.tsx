@@ -99,11 +99,7 @@ export const GroupList: React.FC = () => {
                             fetchData={() => fetchNextPage()}
                             hasMore={hasMore}
                             items={groups.map((group) => (
-                                <GroupEntry
-                                    key={group.id}
-                                    group={group}
-                                    deleteGroupButton={deleteGroupButton}
-                                />
+                                <GroupEntry key={group.id} group={group} deleteGroupButton={deleteGroupButton} />
                             ))}
                         />
                     )}

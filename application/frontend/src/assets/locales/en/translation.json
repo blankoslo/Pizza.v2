@@ -278,6 +278,20 @@
         "onSuccess": "Deletion of group was successful",
         "onError": "Deletion of group failed"
       }
+    },
+    "edit": {
+      "mutation": {
+        "onSuccess": "Group successfully changed",
+        "onError": "Failed to change group"
+      },
+      "title": "Edit group",
+      "form": {
+        "name": "Group name",
+        "buttons": {
+          "save": "Save",
+          "open": "Edit"
+        }
+      }
     }
   }
 }

@@ -5,14 +5,16 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { useTranslation } from 'react-i18next';
 import { Box, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { GroupForm } from './GroupForm';
+import { ApiGroup } from '../../../api/GroupService';
+import {GroupForm} from "./GroupForm";
 
 interface Props {
     open: boolean;
     handleClose: () => void;
+    group: ApiGroup;
 }
 
-const DialogNew: React.FC<Props> = ({ open, handleClose }) => {
+const DialogEdit: React.FC<Props> = ({ open, handleClose, group }) => {
     const { t } = useTranslation();
 
     return (
@@ -25,7 +27,7 @@ const DialogNew: React.FC<Props> = ({ open, handleClose }) => {
         >
             <DialogTitle>
                 <Box display="flex" alignItems="center">
-                    <Box flexGrow={1}>{t('groups.new.title')}</Box>
+                    <Box flexGrow={1}>{t('groups.edit.title')}</Box>
                     <Box>
                         <IconButton onClick={handleClose}>
                             <CloseIcon />
@@ -34,10 +36,10 @@ const DialogNew: React.FC<Props> = ({ open, handleClose }) => {
                 </Box>
             </DialogTitle>
             <DialogContent sx={{ overflowY: 'visible' }}>
-                <GroupForm onSubmitFinished={handleClose} />
+                <GroupForm group={group} onSubmitFinished={handleClose} />
             </DialogContent>
         </Dialog>
     );
 };
 
-export { DialogNew };
+export { DialogEdit };

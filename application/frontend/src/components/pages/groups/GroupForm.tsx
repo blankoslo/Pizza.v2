@@ -38,10 +38,10 @@ interface Props {
     onSubmitFinished: () => void;
 }
 
-export const GroupCreator: React.FC<Props> = ({ onSubmitFinished, group }) => {
+export const GroupForm: React.FC<Props> = ({ onSubmitFinished, group }) => {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
-    const { postGroup } = useGroupService();
+    const { postGroup, patchGroup } = useGroupService();
 
     const formMethods = useForm<Schema>({
         resolver: yupResolver(validationSchema),
@@ -51,27 +51,29 @@ export const GroupCreator: React.FC<Props> = ({ onSubmitFinished, group }) => {
         },
     });
 
-    const addGroupMutation = useMutation((newGroup: ApiGroupPost) => postGroup(newGroup), {
-        onSuccess: () => {
-            toast.success(t('groups.new.mutation.onSuccess'));
-            formMethods.reset();
+    const groupMutation = useMutation(
+        (_group: ApiGroupPost) => (group ? patchGroup(_group, group.id) : postGroup(_group)),
+        {
+            onSuccess: () => {
+                toast.success(t(group ? 'groups.edit.mutation.onSuccess' : 'groups.new.mutation.onSuccess'));
+                formMethods.reset();
+            },
+            onError: () => {
+                toast.error(t(group ? 'groups.edit.mutation.onError' : 'groups.new.mutation.onError'));
+            },
+            onSettled: () => {
+                queryClient.invalidateQueries([groupsDefaultQueryKey]);
+            },
         },
-        onError: () => {
-            toast.error(t('groups.new.mutation.onError'));
-        },
-        onSettled: () => {
-            queryClient.invalidateQueries([groupsDefaultQueryKey]);
-        },
-    });
+    );
 
     const onSubmit = formMethods.handleSubmit(async (data) => {
-        console.log(data);
         const newGroup: ApiGroupPost = {
             name: data.name,
             members: data.members.map((member) => member.value),
         };
 
-        addGroupMutation.mutate(newGroup);
+        groupMutation.mutate(newGroup);
         onSubmitFinished();
     });
 
@@ -88,10 +90,14 @@ export const GroupCreator: React.FC<Props> = ({ onSubmitFinished, group }) => {
                     minWidth: '300px',
                 }}
             >
-                <TextInput name="name" label={t('groups.new.form.name')} type="text" />
+                <TextInput
+                    name="name"
+                    label={t(group ? 'groups.edit.form.name' : 'groups.new.form.name')}
+                    type="text"
+                />
                 <SelectUsers name="members" />
                 <Button variant="contained" color="success" type="submit">
-                    {t('groups.new.form.button')}
+                    {t(group ? 'groups.edit.form.buttons.save' : 'groups.new.form.button')}
                 </Button>
             </Box>
         </FormProvider>
