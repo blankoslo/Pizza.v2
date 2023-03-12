@@ -74,7 +74,6 @@ export const RestaurantList: React.FC = () => {
                     height: '100%',
                     width: '30vw',
                     minWidth: '600px',
-                    borderRadius: 3,
                     display: 'flex',
                     flexDirection: 'column',
                     [theme.breakpoints.down('md')]: {
