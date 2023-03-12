@@ -40,6 +40,7 @@ const SelectRestaurant: React.FC = () => {
 
     return (
         <SelectPaginate
+            id="restaurant-select-input"
             name="restaurant"
             label={t('restaurants.select.label')}
             fullWidth={true}

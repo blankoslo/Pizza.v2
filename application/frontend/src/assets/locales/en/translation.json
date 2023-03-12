@@ -129,6 +129,7 @@
         "onError": "Failed to change event"
       },
       "title": "Edit Pizza Event \uD83C\uDF55",
+      "restaurantSelectLabel": "Restaurant",
       "buttons": {
         "save": "Save",
         "open": "Edit"

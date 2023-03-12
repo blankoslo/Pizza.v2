@@ -16,7 +16,7 @@ const DialogNewEvent: React.FC<Props> = ({ open, handleClose }) => {
     const { t } = useTranslation();
 
     return (
-        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { width: '100%', maxWidth: '400px' } }}>
+        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { width: '100%', maxWidth: '500px' } }}>
             <DialogTitle>
                 <Box display="flex" alignItems="center">
                     <Box flexGrow={1}>{t('events.new.title')}</Box>

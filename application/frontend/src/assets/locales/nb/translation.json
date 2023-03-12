@@ -125,6 +125,7 @@
         "onError": "Endring av arrangement var mislykket"
       },
       "title": "Endre pizza arrangement \uD83C\uDF55",
+      "restaurantSelectLabel": "Restaurant",
       "buttons": {
         "save": "Lagre",
         "open": "Endre"
