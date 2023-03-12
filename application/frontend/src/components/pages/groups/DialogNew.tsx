@@ -21,7 +21,7 @@ const DialogNew: React.FC<Props> = ({ open, handleClose }) => {
             onClose={handleClose}
             fullWidth
             maxWidth="xs"
-            PaperProps={{ style: { overflowY: 'visible' } }}
+            PaperProps={{ style: { overflowY: 'visible', width: '100%', maxWidth: '400px' } }}
         >
             <DialogTitle>
                 <Box display="flex" alignItems="center">

@@ -10,6 +10,7 @@ const GroupsPage: React.FC = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
+                width: '100%',
             }}
         >
             <GroupList />
