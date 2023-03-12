@@ -1,13 +1,12 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { NewEventsContainer } from './NewEventsContainer';
 import { OldEventsContainer } from './OldEventsContainer';
-import { EventsContainer } from './EventsContainer';
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import {Button3D} from "../../Button3D";
-import DialogNewEvent from "./DialogNewEvent";
-import {useTranslation} from "react-i18next";
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import { Button3D } from '../../Button3D';
+import DialogNewEvent from './DialogNewEvent';
+import { useTranslation } from 'react-i18next';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -30,7 +29,7 @@ const TabPanel: React.FC<TabPanelProps> = (props) => {
             {...other}
         >
             {value === index && (
-                <Box sx={(theme) => ({ p: 1, display: 'flex', flexDirection: 'column', overflow: 'auto' })}>
+                <Box sx={(theme) => ({ display: 'flex', flexDirection: 'column', overflow: 'auto' })}>
                     {children}
                 </Box>
             )}
@@ -55,14 +54,18 @@ const EventList: React.FC = () => {
 
     return (
         <Box
-            sx={{
+            sx={(theme) => ({
                 width: '30vw',
                 minWidth: '600px',
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'normal',
-            }}
+                [theme.breakpoints.down('md')]: {
+                    width: '100%',
+                    minWidth: 'unset',
+                },
+            })}
         >
             <Tabs
                 value={value}
@@ -70,13 +73,13 @@ const EventList: React.FC = () => {
                 textColor="primary"
                 indicatorColor="primary"
                 aria-label="Event tabs"
-                sx={(theme) => ({ width: '100%', backgroundColor: theme.palette.secondary.main })}
+                sx={(theme) => ({ width: '100%', backgroundColor: theme.palette.secondary.main, marginBottom: 1 })}
             >
                 <Tab value={0} label={t('events.list.futureEvents.title')} sx={{ flex: 1, fontWeight: 700 }} />
                 <Tab value={1} label={t('events.list.pastEvents.title')} sx={{ flex: 1, fontWeight: 700 }} />
             </Tabs>
             <TabPanel value={value} index={0}>
-                <Box sx={{ marginBottom: 1 }}>
+                <Box sx={{ marginY: 1 }}>
                     <DialogNewEvent open={showNewModal} handleClose={toggleCreateNewForm} />
                     <Button3D text={t('events.list.newEventButton')} onClick={toggleCreateNewForm} />
                 </Box>
@@ -87,6 +90,6 @@ const EventList: React.FC = () => {
             </TabPanel>
         </Box>
     );
-}
+};
 
 export { EventList };

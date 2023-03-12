@@ -28,7 +28,6 @@ const OldEventsContainer: React.FC = () => {
             id={INFINITY_LIST_ID}
             sx={{
                 overflow: 'auto',
-                paddingX: 3,
                 display: 'flex',
                 flexDirection: 'column',
                 flex: 1,

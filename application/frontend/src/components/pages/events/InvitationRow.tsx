@@ -79,9 +79,12 @@ const InvitationRow: React.FC<Props> = ({ eventTime, event_id, slack_id, slack_u
                 }}
             >
                 <Box
-                    sx={{
+                    sx={(theme) => ({
                         display: 'flex',
-                    }}
+                        [theme.breakpoints.down('md')]: {
+                            flexDirection: 'column',
+                        },
+                    })}
                 >
                     <Box
                         sx={{
