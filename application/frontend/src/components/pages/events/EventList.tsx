@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { NewEventsContainer } from './NewEventsContainer';
 import { OldEventsContainer } from './OldEventsContainer';
 import Tabs from '@mui/material/Tabs';
@@ -7,35 +7,7 @@ import Tab from '@mui/material/Tab';
 import { Button3D } from '../../Button3D';
 import DialogNewEvent from './DialogNewEvent';
 import { useTranslation } from 'react-i18next';
-
-interface TabPanelProps {
-    children?: React.ReactNode;
-    index: number;
-    value: number;
-}
-
-const TabPanel: React.FC<TabPanelProps> = (props) => {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <Box
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            sx={{
-                display: 'contents',
-            }}
-            {...other}
-        >
-            {value === index && (
-                <Box sx={(theme) => ({ display: 'flex', flexDirection: 'column', overflow: 'auto' })}>
-                    {children}
-                </Box>
-            )}
-        </Box>
-    );
-};
+import {TabPanel} from "../../TabPanel";
 
 const EventList: React.FC = () => {
     const [value, setValue] = React.useState(0);
@@ -73,10 +45,11 @@ const EventList: React.FC = () => {
                 textColor="primary"
                 indicatorColor="primary"
                 aria-label="Event tabs"
+                variant="fullWidth"
                 sx={(theme) => ({ width: '100%', backgroundColor: theme.palette.secondary.main, marginBottom: 1 })}
             >
-                <Tab value={0} label={t('events.list.futureEvents.title')} sx={{ flex: 1, fontWeight: 700 }} />
-                <Tab value={1} label={t('events.list.pastEvents.title')} sx={{ flex: 1, fontWeight: 700 }} />
+                <Tab value={0} label={t('events.list.futureEvents.title')} sx={{ fontWeight: 700 }} />
+                <Tab value={1} label={t('events.list.pastEvents.title')} sx={{ fontWeight: 700 }} />
             </Tabs>
             <TabPanel value={value} index={0}>
                 <Box sx={{ marginY: 1 }}>
