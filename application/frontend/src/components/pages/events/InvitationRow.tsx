@@ -71,20 +71,21 @@ const InvitationRow: React.FC<Props> = ({ eventTime, event_id, slack_id, slack_u
     return (
         <FormProvider handleSubmit={handleSubmit} watch={watch} {...formMethods}>
             <Box
-                sx={{
+                sx={(theme) => ({
                     borderTop: '1px solid gray',
                     padding: 1,
                     display: 'flex',
                     justifyContent: 'space-between',
-                }}
+                    [theme.breakpoints.down('md')]: {
+                        flexDirection: 'column',
+                    },
+                })}
             >
                 <Box
-                    sx={(theme) => ({
+                    sx={{
                         display: 'flex',
-                        [theme.breakpoints.down('md')]: {
-                            flexDirection: 'column',
-                        },
-                    })}
+                        gap: 2,
+                    }}
                 >
                     <Box
                         sx={{
@@ -120,6 +121,7 @@ const InvitationRow: React.FC<Props> = ({ eventTime, event_id, slack_id, slack_u
                         disabled={eventTime < new Date()}
                         name="rsvp"
                         width={140}
+                        marginLeft={false}
                         items={[
                             { value: 'attending', text: 'attending' },
                             { value: 'not attending', text: 'not attending' },
