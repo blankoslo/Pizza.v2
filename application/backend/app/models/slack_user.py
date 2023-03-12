@@ -122,11 +122,7 @@ class SlackUser(CrudMixin, db.Model):
         ).subquery()
 
         # Filter out ids that isnt in the specified group if the group isnt null and limit to the number to be invited
-        query = session.query(subquery_query_main).filter(
-            sa.or_(
-                subquery_query_main.c.slack_id.in_(subquery_group)
-            )
-        ).limit(
+        query = session.query(subquery_query_main).filter(subquery_query_main.c.slack_id.in_(subquery_group)).limit(
             number_of_users_to_invite
         )
 
