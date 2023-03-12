@@ -39,6 +39,7 @@ const OldEventsContainer: React.FC = () => {
                     parentId={INFINITY_LIST_ID}
                     fetchData={fetchNextPage}
                     hasMore={hasMore}
+                    showEndMessage={false}
                     items={events.map((event) => (
                         <EventCard {...event} key={event.id} />
                     ))}
