@@ -73,19 +73,27 @@ def handle_rsvp(body, ack, attending, client):
     channel = body["channel"]
     channel_id = channel["id"]
     message = body["message"]
+    ts = message['ts']
+    event_id = body["actions"][0]["value"]
+    blocks = message["blocks"][0:3]
     with injector.get(BotApi) as ba:
+        # Send loading message and acknowledge the slack request
+        ba.send_pizza_invite_loading(channel_id=channel_id, ts=ts, old_blocks=blocks, event_id=event_id, slack_client=client)
+        ack()
+        # Handle request
         invited_users = ba.get_invited_users()
         if user_id in invited_users:
-            ts = message['ts']
-            event_id = body["actions"][0]["value"]
-            blocks = message["blocks"][0:3]
+            # Update invitation
             if attending:
                 ba.accept_invitation(event_id=event_id, slack_id=user_id)
             else:
                 ba.decline_invitation(event_id=event_id, slack_id=user_id)
                 ba.invite_multiple_if_needed()
+            # Update the user's invitation message
             ba.send_pizza_invite_answered(channel_id=channel_id, ts=ts, event_id=event_id, old_blocks=blocks, attending=attending, slack_client=client)
-    ack()
+        else:
+            # Handle user that wasn't among invited users
+            ba.send_pizza_invite_not_among_invited_users(channel_id=channel_id, ts=ts, old_blocks=blocks, event_id=event_id, slack_client=client)
 
 @slack_app.action("rsvp_yes")
 @request_time_monitor()
