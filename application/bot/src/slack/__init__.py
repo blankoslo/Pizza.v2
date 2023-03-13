@@ -121,6 +121,10 @@ def handle_rsvp_withdraw(ack, body, context):
     ts = message['ts']
     blocks = message["blocks"][0:3]
     with injector.get(BotApi) as ba:
+        # Send loading message and acknowledge the slack request
+        ba.send_pizza_invite_loading(channel_id=channel_id, ts=ts, old_blocks=blocks, event_id=event_id, slack_client=client)
+        ack()
+        # Try to withdraw the user
         success = ba.withdraw_invitation(event_id=event_id, slack_id=user_id)
         if success:
             logger.info("%s withdrew their invitation", user_id)
@@ -128,7 +132,6 @@ def handle_rsvp_withdraw(ack, body, context):
         else:
             logger.warning("failed to withdraw invitation for %s", user_id)
             ba.send_pizza_invite_withdraw_failure(channel_id=channel_id, ts=ts, old_blocks=blocks, slack_client=client)
-    ack()
 
 def handle_file_share(event, say, token, client):
     channel = event["channel"]
@@ -153,6 +156,7 @@ def handle_file_share(event, say, token, client):
 
 @slack_app.command("/set-pizza-channel")
 def handle_some_command(ack, body, say, context):
+    ack()
     with injector.get(BotApi) as ba:
         team_id = body["team_id"]
         message_channel_id = body["channel_id"]
@@ -170,7 +174,6 @@ def handle_some_command(ack, body, say, context):
                 text='Pizza kanal er nå satt til <#%s>' % channel_id,
                 slack_client=client
             )
-    ack()
 
 # This only exists to make bolt not throw a warning that we dont handle the file_shared event
 # We dont use this as we use the message event with subtype file_shared as that one
