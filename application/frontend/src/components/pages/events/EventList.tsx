@@ -46,7 +46,7 @@ const EventList: React.FC = () => {
                 indicatorColor="primary"
                 aria-label="Event tabs"
                 variant="fullWidth"
-                sx={(theme) => ({ width: '100%', backgroundColor: theme.palette.secondary.main, marginBottom: 1 })}
+                sx={(theme) => ({ width: '100%', backgroundColor: theme.palette.secondary.main, marginBottom: 1, overflow: 'unset', minHeight: 'unset' })}
             >
                 <Tab value={0} label={t('events.list.futureEvents.title')} sx={{ fontWeight: 700 }} />
                 <Tab value={1} label={t('events.list.pastEvents.title')} sx={{ fontWeight: 700 }} />
