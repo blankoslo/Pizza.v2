@@ -1,6 +1,9 @@
 import json
 from marshmallow import Schema
 from src.broker.schemas.message import MessageSchema
+import logging
+from src.injector import injector
+
 
 class MessageHandler:
     handlers = {}
@@ -18,12 +21,6 @@ class MessageHandler:
     @classmethod
     def process_message(cls, message: dict):
         type_ = message['type']
-        payload = message.get('payload')
-        cls.handlers[type_](payload)
-
-    @classmethod
-    def process_message(cls, message: dict):
-        type_ = message['type']
         handler = cls.handlers[type_]
         if handler['incoming_schema'] is not None:
             schema = handler['incoming_schema']()
@@ -32,12 +29,19 @@ class MessageHandler:
         else:
             handler['func']()
 
-def on_message(channel, method, properties, body):
-    msg = body.decode('utf8')
-    schema = MessageSchema()
-    message = schema.load(json.loads(msg))
 
-    MessageHandler.process_message(message)
+def on_message(channel, method, properties, body):
+    logger = injector.get(logging.Logger)
+    try:
+        msg = body.decode('utf8')
+        schema = MessageSchema()
+        message = schema.load(json.loads(msg))
+        logger.info('processing message of type %s', message['type'])
+        MessageHandler.process_message(message)
+        channel.basic_ack(delivery_tag=method.delivery_tag)
+    except Exception as e:
+        logger.error('failed to process message with error %s', repr(e))
+        channel.basic_reject(delivery_tag=method.delivery_tag, requeue=False)
 
 # DO NOT REMOVE: Import handlers to initialize them
 # ALSO DO NOT MOVE: having it at the bottom stops circular imports
