@@ -73,19 +73,29 @@ def handle_rsvp(body, ack, attending, client):
     channel = body["channel"]
     channel_id = channel["id"]
     message = body["message"]
-    with injector.get(BotApi) as ba:
+    ts = message['ts']
+    event_id = body["actions"][0]["value"]
+    blocks = message["blocks"][0:3]
+    # Use bot client outside `with` to not get slowed down by getting a connection
+    bot_client = injector.get(BotApi)
+    # Send loading message and acknowledge the slack request
+    bot_client.send_pizza_invite_loading(channel_id=channel_id, ts=ts, old_blocks=blocks, event_id=event_id, slack_client=client)
+    ack()
+    with bot_client as ba:
+        # Handle request
         invited_users = ba.get_invited_users()
         if user_id in invited_users:
-            ts = message['ts']
-            event_id = body["actions"][0]["value"]
-            blocks = message["blocks"][0:3]
+            # Update invitation
             if attending:
                 ba.accept_invitation(event_id=event_id, slack_id=user_id)
             else:
                 ba.decline_invitation(event_id=event_id, slack_id=user_id)
                 ba.invite_multiple_if_needed()
+            # Update the user's invitation message
             ba.send_pizza_invite_answered(channel_id=channel_id, ts=ts, event_id=event_id, old_blocks=blocks, attending=attending, slack_client=client)
-    ack()
+        else:
+            # Handle user that wasn't among invited users
+            ba.send_pizza_invite_not_among_invited_users(channel_id=channel_id, ts=ts, old_blocks=blocks, event_id=event_id, slack_client=client)
 
 @slack_app.action("rsvp_yes")
 @request_time_monitor()
@@ -112,7 +122,12 @@ def handle_rsvp_withdraw(ack, body, context):
     event_id = body["actions"][0]["value"]
     ts = message['ts']
     blocks = message["blocks"][0:3]
-    with injector.get(BotApi) as ba:
+    bot_client = injector.get(BotApi)
+    # Send loading message and acknowledge the slack request
+    bot_client.send_pizza_invite_loading(channel_id=channel_id, ts=ts, old_blocks=blocks, event_id=event_id, slack_client=client)
+    ack()
+    with bot_client as ba:
+        # Try to withdraw the user
         success = ba.withdraw_invitation(event_id=event_id, slack_id=user_id)
         if success:
             logger.info("%s withdrew their invitation", user_id)
@@ -120,7 +135,6 @@ def handle_rsvp_withdraw(ack, body, context):
         else:
             logger.warning("failed to withdraw invitation for %s", user_id)
             ba.send_pizza_invite_withdraw_failure(channel_id=channel_id, ts=ts, old_blocks=blocks, slack_client=client)
-    ack()
 
 def handle_file_share(event, say, token, client):
     channel = event["channel"]
@@ -145,6 +159,7 @@ def handle_file_share(event, say, token, client):
 
 @slack_app.command("/set-pizza-channel")
 def handle_some_command(ack, body, say, context):
+    ack()
     with injector.get(BotApi) as ba:
         team_id = body["team_id"]
         message_channel_id = body["channel_id"]
@@ -162,7 +177,6 @@ def handle_some_command(ack, body, say, context):
                 text='Pizza kanal er nå satt til <#%s>' % channel_id,
                 slack_client=client
             )
-    ack()
 
 # This only exists to make bolt not throw a warning that we dont handle the file_shared event
 # We dont use this as we use the message event with subtype file_shared as that one
