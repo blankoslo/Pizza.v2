@@ -5,7 +5,6 @@ from sqlalchemy.sql import func
 from app.db import db
 from app.models.enums import RSVP
 from app.models.event import Event
-from app.models.slack_user import SlackUser
 from app.models.invitation import Invitation
 from app.models.mixins import get_field, CrudMixin
 
