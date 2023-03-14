@@ -5,6 +5,7 @@ from sqlalchemy.sql import func
 from app.db import db
 from app.models.enums import RSVP
 from app.models.event import Event
+from app.models.slack_user import SlackUser
 from app.models.invitation import Invitation
 from app.models.mixins import get_field, CrudMixin
 
@@ -42,6 +43,8 @@ class InvitationRepository(Invitation, CrudMixin):
 
         for attr, value in filters.items():
             query = query.filter(getattr(cls, attr) == value)
+
+        query = query.order_by(cls.invited_at.asc())
         return query.all()
 
     @classmethod
