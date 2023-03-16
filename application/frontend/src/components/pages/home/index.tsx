@@ -20,6 +20,7 @@ const HomePage: React.FC = () => {
                 sx={{
                     padding: 2,
                     width: { xs: '100%', md: '800px' },
+                    overflow: 'auto',
                 }}
             >
                 <Typography component="h2" variant="h4">
