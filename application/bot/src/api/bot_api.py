@@ -35,7 +35,6 @@ class BotApi:
         translation_instance = translation('messages', 'src/translations', [str(locale)])
         self._ = lambda text: str(make_lazy_gettext(lambda: translation_instance.gettext)(text))
 
-
     def __enter__(self):
         self.client = injector.get(BrokerClient)
         return self
@@ -604,3 +603,20 @@ class BotApi:
         ]
         blocks = old_blocks + new_blocks
         return slack_client.update_slack_message(channel_id=channel_id, ts=ts, blocks=blocks)
+
+    def send_image_response(self, channel_id, slack_client):
+        self.send_slack_message(channel_id=channel_id, text=u'Takk for fil! 🤙', slack_client=slack_client)
+
+    def send_set_pizza_channel(self, channel_id, success, slack_client):
+        if success:
+            self.send_slack_message(
+                channel_id=channel_id,
+                text='Noe gikk galt. Klarte ikke å sette Pizza kanal',
+                slack_client=slack_client
+            )
+        else:
+            self.send_slack_message(
+                channel_id=channel_id,
+                text='Pizza kanal er nå satt til <#%s>' % channel_id,
+                slack_client=slack_client
+            )

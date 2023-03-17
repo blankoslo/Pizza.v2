@@ -115,4 +115,3 @@ msgstr ""
 #: src/api/bot_api.py:589
 msgid "Pizza arrangementet er over. Avmelding er ikke mulig."
 msgstr ""
-
