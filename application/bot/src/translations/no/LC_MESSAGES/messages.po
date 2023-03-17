@@ -118,3 +118,14 @@ msgstr ""
 msgid "Pizza arrangementet er over. Avmelding er ikke mulig."
 msgstr ""
 
+#: src/api/bot_api.py:608
+msgid "Takk for fil! 🤙"
+msgstr ""
+
+#: src/api/bot_api.py:614
+msgid "Noe gikk galt. Klarte ikke å sette Pizza kanal"
+msgstr ""
+
+#: src/api/bot_api.py:620
+msgid "Pizza kanal er nå satt til <#%s>"
+msgstr ""

@@ -126,3 +126,14 @@ msgstr "You have cancelled your attendance. Okay 😕"
 msgid "Pizza arrangementet er over. Avmelding er ikke mulig."
 msgstr "The pizza event is over. Cancellation is not possible."
 
+#: src/api/bot_api.py:608
+msgid "Takk for fil! 🤙"
+msgstr "Thanks for the file! 🤙"
+
+#: src/api/bot_api.py:614
+msgid "Noe gikk galt. Klarte ikke å sette Pizza kanal"
+msgstr "Something went wrong. Was unable to set the Pizza channel"
+
+#: src/api/bot_api.py:620
+msgid "Pizza kanal er nå satt til <#%s>"
+msgstr "Pizza channel is now set to <#%s>"
