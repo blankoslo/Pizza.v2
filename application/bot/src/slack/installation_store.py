@@ -1,4 +1,3 @@
-from logging import Logger
 from typing import Optional
 import json
 
@@ -103,3 +102,4 @@ class BrokerInstallationStore(InstallationStore):
         self.storage.delete(team_id)
 
 
+slack_installation_store = BrokerInstallationStore()

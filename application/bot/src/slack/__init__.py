@@ -11,7 +11,7 @@ from slack_sdk.oauth.state_store import FileOAuthStateStore
 
 from src.api.bot_api import BotApi, BotApiConfiguration
 from src.injector import injector
-from src.slack.installation_store import BrokerInstallationStore
+from src.slack.installation_store import slack_installation_store
 from src.api.slack_api import SlackApi
 
 slack_signing_secret = os.environ["SLACK_SIGNING_SECRET"]
@@ -21,7 +21,7 @@ slack_app_token = os.environ["SLACK_APP_TOKEN"]
 
 slack_app = App(
     signing_secret=slack_signing_secret,
-    installation_store=BrokerInstallationStore(),
+    installation_store=slack_installation_store,
     oauth_settings=OAuthSettings(
         client_id=client_id,
         client_secret=client_secret,
