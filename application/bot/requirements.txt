@@ -11,3 +11,5 @@ apscheduler
 marshmallow
 marshmallow_enum
 lmdb
+babel
+speaklater

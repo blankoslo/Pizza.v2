@@ -1,0 +1,128 @@
+# English translations for PROJECT.
+# Copyright (C) 2023 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2023-03-17 10:06+0000\n"
+"PO-Revision-Date: 2023-03-17 10:06+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.12.1\n"
+
+#: src/api/bot_api.py:38
+msgid ""
+"Hei! Jeg er pizzabot. Hvis dere vil endre hvilke kanal jeg bruker så kan "
+"dere gå inn i riktig kanal og bruke kommandoen '/set-pizza-channel'. Hvis"
+" kanalen er privat må dere legge meg til først."
+msgstr ""
+"Hi! I am PizzaBot. If you want to change which channel I use, "
+"then you can go to the correct channel and use the command '/set-pizza-channel'. "
+"If the channel is private, you must add me first."
+
+#: src/api/bot_api.py:134
+msgid "Hei du! Jeg hørte ikke noe mer? Er du gira?"
+msgstr "Hey there! I didn't hear anything else. Are you still interested?"
+
+#: src/api/bot_api.py:162
+#, python-format
+msgid ""
+"Halloi! %s! Dere skal spise 🍕 på %s, %s. %s booker bord, og %s legger ut "
+"for maten. Blank betaler!"
+msgstr ""
+"Hello! %s! You're having 🍕 at %s, %s. %s is booking a table, and %s is "
+"covering the food. Blank is paying!"
+
+#: src/api/bot_api.py:175
+#, python-format
+msgid ""
+"Halloi! %s! Hvis den som meldte seg av besøket til  %s  %s skulle betale "
+"eller booke så må nesten en av dere andre sørge for det. I mellomtiden "
+"letes det etter en erstatter."
+msgstr ""
+"Hello! %s! If the person who cancelled the visit to %s %s was supposed to "
+"pay or book, someone else will have to take care of that. In the meantime, "
+"we're looking for a replacement."
+
+
+#: src/api/bot_api.py:185
+#, python-format
+msgid "Halloi! <@%s> meldte seg nettopp av besøket til %s %s."
+msgstr "Hello! <@%s> just cancelled their visit to %s %s."
+
+#: src/api/bot_api.py:223
+msgid "Neivel, da antar jeg du ikke kan/gidder. Håper du blir med neste gang! 🤞"
+msgstr "Alright, I assume you're not interested/able then. Hope to see you next time! 🤞"
+
+#: src/api/bot_api.py:314
+#, python-format
+msgid "Halloi! Besøket til %s, %s har blitt kansellert. Sorry!"
+msgstr "Hello! The visit to %s, %s has been cancelled. Sorry!"
+
+#: src/api/bot_api.py:326
+#, python-format
+msgid "Halloi! %s! Besøket til %s, %s har blitt kansellert. Sorry!"
+msgstr "Hello! %s! The visit to %s, %s has been cancelled. Sorry!"
+
+#: src/api/bot_api.py:346
+#, python-format
+msgid "Halloi! Besøket til %s, %s har blit endret til %s, %s."
+msgstr "Hello! The visit to %s, %s has been changed to %s, %s."
+
+#: src/api/bot_api.py:356
+#, python-format
+msgid "Halloi! %s! Besøket til %s, %s har blit endret til %s, %s."
+msgstr "Hello! %s! The visit to %s, %s has been changed to %s, %s."
+
+#: src/api/bot_api.py:372
+msgid "Pizzainvitasjon"
+msgstr "Pizza invitation"
+
+#: src/api/bot_api.py:392 src/api/bot_api.py:484
+msgid "Hells yesss!!! 🍕🍕🍕"
+msgstr "Hells yesss!!! 🍕🍕🍕"
+
+#: src/api/bot_api.py:401 src/api/bot_api.py:493
+msgid "Nah ☹️"
+msgstr "Nah ☹️"
+
+#: src/api/bot_api.py:425
+msgid ":hourglass_flowing_sand: Behandler forespørselen din..."
+msgstr ":hourglass_flowing_sand: Processing your request..."
+
+#: src/api/bot_api.py:439
+msgid "Kunne ikke oppdatere invitasjonen. Du var ikke blant de inviterte."
+msgstr "Could not update the invitation. You were not among the invitees."
+
+#: src/api/bot_api.py:522
+msgid "Hvis noe skulle skje så kan du melde deg av ved å klikke på knappen!"
+msgstr "If something comes up, you can cancel by clicking the button!"
+
+#: src/api/bot_api.py:528
+msgid "Meld meg av"
+msgstr "Cancel my attendance"
+
+#: src/api/bot_api.py:547
+msgid "Arrangementet har blitt avlyst."
+msgstr "The event has been cancelled."
+
+#: src/api/bot_api.py:561
+msgid "Invitasjonen er utløpt."
+msgstr "The invitation has expired."
+
+#: src/api/bot_api.py:575
+msgid "Du har meldt deg av. Ok 😕"
+msgstr "You have cancelled your attendance. Okay 😕"
+
+#: src/api/bot_api.py:589
+msgid "Pizza arrangementet er over. Avmelding er ikke mulig."
+msgstr "The pizza event is over. Cancellation is not possible."
+

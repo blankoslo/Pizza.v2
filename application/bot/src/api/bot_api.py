@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 import pytz
 import os
+from speaklater import make_lazy_gettext
+from babel import Locale, support
+from gettext import translation
+
 from injector import inject
 
 from src.api.slack_api import SlackApi
@@ -12,8 +16,9 @@ from src.injector import injector
 import logging
 
 class BotApiConfiguration:
-    def __init__(self, timezone):
+    def __init__(self, timezone, locale=None):
         self.timezone = timezone
+        self.locale = locale
 
 class BotApi:
     @inject
@@ -22,6 +27,14 @@ class BotApi:
         self.HOURS_BETWEEN_REMINDERS = int(os.environ["HOURS_BETWEEN_REMINDERS"])
         self.timezone = config.timezone
         self.logger = logger
+        # Handle different translations
+        locale = Locale("en")
+        if config.locale is not None:
+            locale = Locale(config.locale)
+        support.Translations.load('src/translations', [str(locale)])
+        translation_instance = translation('messages', 'src/translations', [str(locale)])
+        self._ = lambda text: str(make_lazy_gettext(lambda: translation_instance.gettext)(text))
+
 
     def __enter__(self):
         self.client = injector.get(BrokerClient)
@@ -34,7 +47,7 @@ class BotApi:
         channel_id = self.join_channel(slack_client=slack_client, team_id=team_id)
         self.send_slack_message(
             channel_id=channel_id,
-            text="Hei! Jeg er pizzabot. Hvis dere vil endre hvilke kanal jeg bruker så kan dere gå inn i riktig kanal og bruke kommandoen '/set-pizza-channel'. Hvis kanalen er privat må dere legge meg til først.",
+            text=self._("Hei! Jeg er pizzabot. Hvis dere vil endre hvilke kanal jeg bruker så kan dere gå inn i riktig kanal og bruke kommandoen '/set-pizza-channel'. Hvis kanalen er privat må dere legge meg til først."),
             slack_client=slack_client
         )
 
@@ -130,7 +143,7 @@ class BotApi:
             if invitation['reminded_at'] < remind_timestamp:
                 slack_client.send_slack_message(
                     channel_id=invitation['slack_id'],
-                    text="Hei du! Jeg hørte ikke noe mer? Er du gira?"
+                    text=self._("Hei du! Jeg hørte ikke noe mer? Er du gira?")
                 )
                 was_updated = self.client.update_invitation(
                     slack_id=invitation['slack_id'],
@@ -158,7 +171,7 @@ class BotApi:
         # Send the finalization Slack message
         slack_client.send_slack_message(
             channel_id=channel_id,
-            text="Halloi! %s! Dere skal spise 🍕 på %s, %s. %s booker bord, og %s legger ut for maten. Blank betaler!" % (ids_string, restaurant_name, timestamp.strftime("%A %d. %B kl %H:%M"), booker, payer)
+            text=self._("Halloi! %s! Dere skal spise 🍕 på %s, %s. %s booker bord, og %s legger ut for maten. Blank betaler!") % (ids_string, restaurant_name, timestamp.strftime("%A %d. %B kl %H:%M"), booker, payer)
         )
 
     def send_event_unfinalized(self, timestamp, restaurant_name, slack_ids, channel_id, slack_client):
@@ -171,7 +184,7 @@ class BotApi:
         # Send message that the event unfinalized
         slack_client.send_slack_message(
             channel_id=channel_id,
-            text="Halloi! %s! Hvis den som meldte seg av besøket til  %s  %s skulle betale eller booke så må nesten en av dere andre sørge for det. I mellomtiden letes det etter en erstatter." % (ids_string, restaurant_name, timestamp.strftime("%A %d. %B kl %H:%M"))
+            text=self._("Halloi! %s! Hvis den som meldte seg av besøket til  %s  %s skulle betale eller booke så må nesten en av dere andre sørge for det. I mellomtiden letes det etter en erstatter.") % (ids_string, restaurant_name, timestamp.strftime("%A %d. %B kl %H:%M"))
         )
         # Invite more users for the event
         self.invite_multiple_if_needed()
@@ -181,7 +194,7 @@ class BotApi:
         # Send message that the user withdrew
         slack_client.send_slack_message(
             channel_id=channel_id,
-            text="Halloi! <@%s> meldte seg nettopp av besøket til %s %s." % (user_id, restaurant_name, timestamp.strftime("%A %d. %B kl %H:%M"))
+            text=self._("Halloi! <@%s> meldte seg nettopp av besøket til %s %s.") % (user_id, restaurant_name, timestamp.strftime("%A %d. %B kl %H:%M"))
         )
         # Invite more users for the event
         self.invite_multiple_if_needed()
@@ -219,7 +232,7 @@ class BotApi:
                     # Send the user a message that the invite expired
                     slack_client.send_slack_message(
                         channel_id=invitation['slack_id'],
-                        text="Neivel, da antar jeg du ikke kan/gidder. Håper du blir med neste gang! 🤞"
+                        text=self._("Neivel, da antar jeg du ikke kan/gidder. Håper du blir med neste gang! 🤞")
                     )
                     self.logger.info("%s didn't answer. Setting RSVP to not attending." % invitation['slack_id'])
                 else:
@@ -310,7 +323,7 @@ class BotApi:
             # Send the user a message that the event has been cancelled
             slack_client.send_slack_message(
                 channel_id=slack_id,
-                text="Halloi! Besøket til %s, %s har blitt kansellert. Sorry!" % (restaurant_name, time.strftime("%A %d. %B kl %H:%M"))
+                text=self._("Halloi! Besøket til %s, %s har blitt kansellert. Sorry!") % (restaurant_name, time.strftime("%A %d. %B kl %H:%M"))
             )
             self.logger.info("Informed user: %s" % slack_id)
 
@@ -322,7 +335,7 @@ class BotApi:
         self.logger.info("finalized event got cancelled for users %s" % ", ".join(slack_user_ids))
         slack_client.send_slack_message(
             channel_id=channel_id,
-            text="Halloi! %s! Besøket til %s, %s har blitt kansellert. Sorry!" % (ids_string, restaurant_name, time.strftime("%A %d. %B kl %H:%M"),)
+            text=self._("Halloi! %s! Besøket til %s, %s har blitt kansellert. Sorry!") % (ids_string, restaurant_name, time.strftime("%A %d. %B kl %H:%M"),)
         )
         # Update invitation message - remove buttons and tell user it has been cancelled
         for slack_user_data in slack_data:
@@ -342,7 +355,7 @@ class BotApi:
         for slack_id in slack_ids:
             slack_client.send_slack_message(
                 channel_id=slack_id,
-                text="Halloi! Besøket til %s, %s har blit endret til %s, %s." % (old_restaurant_name, old_time.strftime("%A %d. %B kl %H:%M"), restaurant_name, time.strftime("%A %d. %B kl %H:%M"))
+                text=self._("Halloi! Besøket til %s, %s har blit endret til %s, %s.") % (old_restaurant_name, old_time.strftime("%A %d. %B kl %H:%M"), restaurant_name, time.strftime("%A %d. %B kl %H:%M"))
             )
             self.logger.info("Informed user: %s" % slack_id)
 
@@ -352,7 +365,7 @@ class BotApi:
         self.logger.info("finalized event got updated for users %s" % ", ".join(slack_ids))
         slack_client.send_slack_message(
             channel_id=channel_id,
-            text="Halloi! %s! Besøket til %s, %s har blit endret til %s, %s." % (ids_string, old_restaurant_name, old_time.strftime("%A %d. %B kl %H:%M"), restaurant_name, time.strftime("%A %d. %B kl %H:%M"))
+            text=self._("Halloi! %s! Besøket til %s, %s har blit endret til %s, %s.") % (ids_string, old_restaurant_name, old_time.strftime("%A %d. %B kl %H:%M"), restaurant_name, time.strftime("%A %d. %B kl %H:%M"))
         )
 
     def send_slack_message(self, channel_id, text, slack_client, blocks=None, thread_ts=None):
@@ -368,14 +381,14 @@ class BotApi:
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": "Pizzainvitasjon"
+                    "text": self._("Pizzainvitasjon")
                 }
             },
             {
                 "type": "section",
                 "text": {
                     "type": "plain_text",
-                    "text": f"Du er invitert til :pizza: på {place}, {datetime}. Pls svar innen {deadline} timer :pray:. Kan du?"
+                    "text": self._(f"Du er invitert til :pizza: på {place}, {datetime}. Pls svar innen {deadline} timer :pray:. Kan du?")
                 }
             },
             {
@@ -388,7 +401,7 @@ class BotApi:
                         "type": "button",
                         "text": {
                             "type": "plain_text",
-                            "text": "Hells yesss!!! 🍕🍕🍕"
+                            "text": self._("Hells yesss!!! 🍕🍕🍕")
                         },
                         "value": event_id,
                         "action_id": "rsvp_yes",
@@ -397,7 +410,7 @@ class BotApi:
                         "type": "button",
                         "text": {
                             "type": "plain_text",
-                            "text": "Nah ☹️"
+                            "text": self._("Nah ☹️")
                         },
                         "value": event_id,
                         "action_id": "rsvp_no",
@@ -421,7 +434,7 @@ class BotApi:
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": ":hourglass_flowing_sand: Behandler forespørselen din...",
+                    "text": self._(":hourglass_flowing_sand: Behandler forespørselen din..."),
                 }
             }
         ]
@@ -435,7 +448,7 @@ class BotApi:
                 "type": "section",
                 "text": {
                     "type": "plain_text",
-                    "text": "Kunne ikke oppdatere invitasjonen. Du var ikke blant de inviterte.",
+                    "text": self._("Kunne ikke oppdatere invitasjonen. Du var ikke blant de inviterte."),
                 }
             }
         ]
@@ -480,7 +493,7 @@ class BotApi:
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "Hells yesss!!! 🍕🍕🍕"
+                        "text": self._("Hells yesss!!! 🍕🍕🍕")
                     },
                     "value": str(event_id),
                     "action_id": "rsvp_yes",
@@ -489,7 +502,7 @@ class BotApi:
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "Nah ☹️"
+                        "text": self._("Nah ☹️")
                     },
                     "value": str(event_id),
                     "action_id": "rsvp_no",
@@ -506,7 +519,7 @@ class BotApi:
                 "type": "section",
                 "text": {
                     "type": "plain_text",
-                    "text": f"Du har takket {'ja. Sweet! 🤙' if attending else 'nei. Ok 😕'}",
+                    "text": _(f"Du har takket {'ja. Sweet! 🤙' if attending else 'nei. Ok 😕'}"),
                 }
             }
         ]
@@ -518,13 +531,13 @@ class BotApi:
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "Hvis noe skulle skje så kan du melde deg av ved å klikke på knappen!"
+                    "text": self._("Hvis noe skulle skje så kan du melde deg av ved å klikke på knappen!")
                 },
                 "accessory": {
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "Meld meg av"
+                        "text": self._("Meld meg av")
                     },
                     "value": str(event_id),
                     "action_id": "rsvp_withdraw"
@@ -543,7 +556,7 @@ class BotApi:
                 "type": "section",
                 "text": {
                     "type": "plain_text",
-                    "text": "Arrangementet har blitt avlyst.",
+                    "text": self._("Arrangementet har blitt avlyst."),
                 }
             }
         ]
@@ -557,7 +570,7 @@ class BotApi:
                 "type": "section",
                 "text": {
                     "type": "plain_text",
-                    "text": "Invitasjonen er utløpt.",
+                    "text": self._("Invitasjonen er utløpt."),
                 }
             }
         ]
@@ -571,7 +584,7 @@ class BotApi:
                 "type": "section",
                 "text": {
                     "type": "plain_text",
-                    "text": "Du har meldt deg av. Ok 😕",
+                    "text": self._("Du har meldt deg av. Ok 😕"),
                 }
             }
         ]
@@ -585,7 +598,7 @@ class BotApi:
                 "type": "section",
                 "text": {
                     "type": "plain_text",
-                    "text": "Pizza arrangementet er over. Avmelding er ikke mulig.",
+                    "text": self._("Pizza arrangementet er over. Avmelding er ikke mulig."),
                 }
             }
         ]
