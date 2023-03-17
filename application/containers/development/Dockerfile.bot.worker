@@ -13,4 +13,4 @@ RUN \
 
 WORKDIR /srv/bot
 
-CMD python main.py
+CMD (pybabel compile -d src/translations -D messages && python main.py)

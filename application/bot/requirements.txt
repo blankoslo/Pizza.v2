@@ -13,3 +13,4 @@ marshmallow_enum
 lmdb
 babel
 speaklater
+pybabel
