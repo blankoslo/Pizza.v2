@@ -15,10 +15,7 @@ class SlackOrganizationService:
         return SlackOrganizationRepository.get_by_id(id=team_id)
 
     def _delete_cloudinary_images_for_slack_organization(self, team_id, next_cursor=None):
-        if next_cursor is not None:
-            res = cloudinary.api.delete_resources_by_tag(tag=team_id, next_cursor=next_cursor)
-        else:
-            res = cloudinary.api.delete_resources_by_tag(tag=team_id)
+        res = cloudinary.api.delete_resources_by_tag(tag=team_id, next_cursor=next_cursor)
         if res['partial']:
             self._delete_cloudinary_images_for_slack_organization(team_id=team_id, next_cursor=res['next_cursor'])
 
