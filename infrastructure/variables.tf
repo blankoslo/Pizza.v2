@@ -53,10 +53,6 @@ variable "PRODUCTION_CLOUDINARY_API_SECRET" {
   type = string
 }
 
-variable "PRODUCTION_CLOUDINARY_API_PROXY" {
-  type = string
-}
-
 # ************* STAGING ************* #
 /*
 variable "STAGING_SLACK_APP_TOKEN" {
@@ -88,10 +84,6 @@ variable "STAGING_CLOUDINARY_API_KEY" {
 }
 
 variable "STAGING_CLOUDINARY_API_SECRET" {
-  type = string
-}
-
-variable "STAGING_CLOUDINARY_API_PROXY" {
   type = string
 }
 */

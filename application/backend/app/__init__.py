@@ -128,7 +128,7 @@ def create_app(environment):
         cloud_name=app.config["CLOUDINARY_CLOUD_NAME"],
         api_key=app.config["CLOUDINARY_API_KEY"],
         api_secret=app.config["CLOUDINARY_API_SECRET"],
-        api_proxy=app.config["CLOUDINARY_API_PROXY"],
+        secure=True,
     )
 
     return app
