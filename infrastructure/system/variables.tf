@@ -62,6 +62,22 @@ variable "SECRET_KEY_BACKEND" {
   type = string
 }
 
+variable "CLOUDINARY_CLOUD_NAME" {
+  type = string
+}
+
+variable "CLOUDINARY_API_KEY" {
+  type = string
+}
+
+variable "CLOUDINARY_API_SECRET" {
+  type = string
+}
+
+variable "CLOUDINARY_API_PROXY" {
+  type = string
+}
+
 variable "PAPERTRAIL_PLAN" {
   type = string
 }
