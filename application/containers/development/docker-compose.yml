@@ -16,7 +16,6 @@ x-common-cloudinary-variables: &common-cloudinary-variables
   CLOUDINARY_API_SECRET: ""
   CLOUDINARY_API_PROXY: ""
 
-
 x-common-rabbitmq-variables: &common-rabbitmq-variables
   MQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
   MQ_EXCHANGE: Pizza_Exchange
