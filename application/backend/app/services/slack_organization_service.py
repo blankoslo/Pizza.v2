@@ -27,7 +27,7 @@ class SlackOrganizationService:
             self._delete_cloudinary_images_for_slack_organization(team_id=team_id)
             return SlackOrganizationRepository.delete(id=team_id)
         except Exception as e:
-            self.logger.error("Failed to delete cloudinary images and delete organization %s", team_id)
+            self.logger.error("Failed to delete cloudinary images and or delete organization %s", team_id)
             self.logger.error(e)
         return None
 
