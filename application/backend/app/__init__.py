@@ -2,6 +2,7 @@ import os
 import json
 import logging
 import sys
+import cloudinary
 
 from app.db import db, migrate
 from app.api import api, ma
@@ -121,6 +122,14 @@ def create_app(environment):
 
     # Set up / register blueprints
     register_blueprints(api)
+
+    # Set up cloudinary
+    cloudinary.config(
+        cloud_name=app.config["CLOUDINARY_CLOUD_NAME"],
+        api_key=app.config["CLOUDINARY_API_KEY"],
+        api_secret=app.config["CLOUDINARY_API_SECRET"],
+        api_proxy=app.config["CLOUDINARY_API_PROXY"],
+    )
 
     return app
 
