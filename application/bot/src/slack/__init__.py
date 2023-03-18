@@ -149,8 +149,8 @@ def handle_file_share(event, say, token, client):
                 b64 = base64.b64encode(r.content).decode('utf-8')
                 payload = {
                     'file': 'data:image;base64,%s' % b64,
-                    'upload_preset': 'blank.pizza',
-                    'tags': file['user_team']
+                    'upload_preset': 'blank.pizza.v2',
+                    'tags': ','.join(['pizza', file['user_team']])
                 }
                 r2 = requests.post(
                     'https://api.cloudinary.com/v1_1/blank/image/upload', data=payload)
