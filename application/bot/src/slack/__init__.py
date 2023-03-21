@@ -138,10 +138,13 @@ def handle_rsvp_withdraw(ack, body, context):
 
 def handle_file_share(event, say, token, client):
     channel = event["channel"]
+    thread_ts = None
+    if 'thread_ts' in event:
+        thread_ts = event['thread_ts']
     if 'files' in event:
         files = event['files']
         with injector.get(BotApi) as ba:
-            ba.send_slack_message(channel_id=channel, text=u'Takk for fil! 🤙', slack_client=client)
+            ba.send_slack_message(channel_id=channel, text=u'Takk for fil! 🤙', thread_ts=thread_ts, slack_client=client)
             headers = {u'Authorization': u'Bearer %s' % token}
             for file in files:
                 r = requests.get(
