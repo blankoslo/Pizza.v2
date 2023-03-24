@@ -193,10 +193,17 @@ def events(db, restaurant, groups, slack_organizations):
         people_per_event=5,
         slack_organization_id=slack_organizations[0].team_id
     )
+    event3 = Event(
+        time="2023-04-24T16:23:05.420Z",
+        restaurant_id=restaurant.get(slack_organizations[1].team_id)[0].id,
+        people_per_event=5,
+        slack_organization_id=slack_organizations[1].team_id
+    )
     db.session.add(event1)
     db.session.add(event2)
+    db.session.add(event3)
     db.session.commit()
     return {
         slack_organizations[0].team_id: [event1, event2],
-        slack_organizations[1].team_id: []
+        slack_organizations[1].team_id: [event3]
     }
