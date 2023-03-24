@@ -55,9 +55,28 @@ class TestEventsSuit:
                     assert response_members_sorted[i]["priority"] == member.priority
                     assert response_members_sorted[i]["email"] == member.email
 
+    def test_events_post_no_group(self, user, restaurant):
+        token = create_access_token(identity=user)
+        headers = {"Authorization": f"Bearer {token}"}
+        payload = {
+            "restaurant_id": restaurant.id,
+            "time": "2023-03-28T16:23:05.420Z",
+            "people_per_event": 5
+        }
+        response = self.client.post(url_for('api.events.Events', method='post'), headers=headers, json=payload)
+        assert response.status_code == 201
 
-    def test_events_post(self, user):
-        pass
+    def test_events_post_group(self, user, restaurant, group):
+        token = create_access_token(identity=user)
+        headers = {"Authorization": f"Bearer {token}"}
+        payload = {
+            "restaurant_id": restaurant.id,
+            "group_id": group.id,
+            "time": "2023-03-28T16:23:05.420Z",
+            "people_per_event": 5
+        }
+        response = self.client.post(url_for('api.events.Events', method='post'), headers=headers, json=payload)
+        assert response.status_code == 201
 
     def test_events_by_id_get(self, user):
         pass

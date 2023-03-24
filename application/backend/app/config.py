@@ -23,6 +23,7 @@ class Base(object):
 
 
 class Test(Base):
+    DEBUG = True
     FRONTEND_URI = 'localhost'
     SLACK_CLIENT_ID = 'dontCareSlackClientId'
     MQ_EVENT_QUEUE = 'dontCareMqEventQueue'
