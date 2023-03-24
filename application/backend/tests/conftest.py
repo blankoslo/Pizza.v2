@@ -6,18 +6,18 @@ import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from app.models.user import User
 from app.models.slack_organization import SlackOrganization
+from app.models.restaurant import Restaurant
+from app.models.event import Event
+from sqlalchemy import text
 
 database_name = "pizza"
 postgresql = factories.postgresql_proc(dbname=database_name)
 
-
-@pytest.fixture
-def postgresql_url(postgresql):
-    connection = f'postgresql://{postgresql.user}:{postgresql.password}@{postgresql.host}:{postgresql.port}/{postgresql.dbname}'
-
+@pytest.fixture(scope='session')
+def postgresql_database(postgresql):
     conn = psycopg2.connect(
         dbname='postgres',
-        user='postgres',
+        user=postgresql.user,
         host=postgresql.host,
         port=postgresql.port,
         password=postgresql.password
@@ -30,7 +30,12 @@ def postgresql_url(postgresql):
     cur.close()
     conn.close()
 
-    return connection
+    yield postgresql
+
+
+@pytest.fixture
+def postgresql_url(postgresql_database):
+    return f'postgresql://{postgresql_database.user}:{postgresql_database.password}@{postgresql_database.host}:{postgresql_database.port}/{postgresql_database.dbname}'
 
 
 @pytest.fixture
@@ -59,6 +64,11 @@ def app(mocker, environment_variables):
 @pytest.fixture
 def db(app):
     db = SQLAlchemy(app=app)
+    db.session.execute(text('DROP SCHEMA public CASCADE'))
+    # create the public schema
+    db.session.execute(text('CREATE SCHEMA public'))
+    # commit the changes
+    db.session.commit()
     return db
 
 
@@ -89,3 +99,33 @@ def user(db, slack_organization):
     db.session.add(user)
     db.session.commit()
     return user
+
+
+@pytest.fixture
+def restaurant(db, slack_organization):
+    restaurant = Restaurant(
+        name="dontCare",
+        slack_organization_id=slack_organization.team_id
+    )
+    db.session.add(restaurant)
+    db.session.commit()
+    return restaurant
+
+@pytest.fixture
+def events(db, restaurant, slack_organization):
+    event1 = Event(
+        time="2023-03-30T16:23:05.420Z",
+        restaurant_id=restaurant.id,
+        people_per_event=5,
+        slack_organization_id=slack_organization.team_id
+    )
+    event2 = Event(
+        time="2023-04-24T16:23:05.420Z",
+        restaurant_id=restaurant.id,
+        people_per_event=5,
+        slack_organization_id=slack_organization.team_id
+    )
+    db.session.add(event1)
+    db.session.add(event2)
+    db.session.commit()
+    return [event1, event2]
