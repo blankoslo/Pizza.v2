@@ -8,6 +8,8 @@ from app.models.user import User
 from app.models.slack_organization import SlackOrganization
 from app.models.restaurant import Restaurant
 from app.models.event import Event
+from app.models.slack_user import SlackUser
+from app.models.group import Group
 from sqlalchemy import text
 
 database_name = "pizza"
@@ -104,20 +106,50 @@ def user(db, slack_organization):
 @pytest.fixture
 def restaurant(db, slack_organization):
     restaurant = Restaurant(
-        name="dontCare",
+        name="dontCareRestaurant",
         slack_organization_id=slack_organization.team_id
     )
     db.session.add(restaurant)
     db.session.commit()
     return restaurant
 
+
 @pytest.fixture
-def events(db, restaurant, slack_organization):
+def slack_user(db, slack_organization):
+    slack_user = SlackUser(
+        slack_id="dontCareSlackId",
+        current_username="dontCareUsername",
+        first_seen="2023-03-24T16:23:05.420Z",
+        active=True,
+        priority=1,
+        email="dontCare@email.invalid",
+        slack_organization_id=slack_organization.team_id
+    )
+    db.session.add(slack_user)
+    db.session.commit()
+    return slack_user
+
+
+@pytest.fixture
+def group(db, slack_organization, slack_user):
+    group = Group(
+        name="dontCareGroup",
+        members=[slack_user],
+        slack_organization_id=slack_organization.team_id
+    )
+    db.session.add(group)
+    db.session.commit()
+    return group
+
+
+@pytest.fixture
+def events(db, restaurant, group, slack_organization):
     event1 = Event(
         time="2023-03-30T16:23:05.420Z",
         restaurant_id=restaurant.id,
         people_per_event=5,
-        slack_organization_id=slack_organization.team_id
+        slack_organization_id=slack_organization.team_id,
+        group_id=group.id
     )
     event2 = Event(
         time="2023-04-24T16:23:05.420Z",

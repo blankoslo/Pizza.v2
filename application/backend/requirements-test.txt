@@ -2,3 +2,4 @@ pytest
 pytest_postgresql
 pytest-flask
 pytest-mock
+pymaybe
