@@ -2,6 +2,7 @@ import os
 from datetime import timedelta
 
 class Base(object):
+    SECRET_KEY = os.environ.get("SECRET_KEY")
     # DATABASE_URL is the environment variable created by heroku during production deployment
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL').replace("postgres://", "postgresql://", 1) if 'DATABASE_URL' in os.environ else f'postgresql://{os.environ.get("DB_USER")}:{os.environ.get("DB_PASSWD")}@{os.environ.get("DB_HOST")}:{os.environ.get("DB_PORT")}/{os.environ.get("DB_NAME")}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -19,6 +20,19 @@ class Base(object):
     # JWT
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
+
+
+class Test(Base):
+    FRONTEND_URI = 'localhost'
+    SLACK_CLIENT_ID = 'dontCareSlackClientId'
+    MQ_EVENT_QUEUE = 'dontCareMqEventQueue'
+    CLOUDINARY_CLOUD_NAME = 'dontCareCloudinaryCloudName'
+    CLOUDINARY_API_KEY = 'dontCareCloudinaryApiKey'
+    CLOUDINARY_API_SECRET = 'dontCareCloudinaryApiSecret'
+
+
+class Production(Base):
+    FRONTEND_URI = os.environ.get("FRONTEND_URI").rstrip('/') if 'FRONTEND_URI' in os.environ else None
     # RabbitMQ - CLOUDAMQP_URL is the environment variable created by heroku during production deployment
     MQ_URL = os.environ.get('MQ_URL') if 'MQ_URL' in os.environ else os.environ.get('CLOUDAMQP_URL')
     MQ_EXCHANGE = os.environ.get('MQ_EXCHANGE')

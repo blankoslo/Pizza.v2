@@ -2,8 +2,8 @@ from app import create_app
 
 config = {
     "base": "app.config.Base",
-    "dev": "app.config.Development",
-    "prod": "app.config.Production"
+    "test": "app.config.Test",
+    "production": "app.config.Production"
 }
 
 app = create_app(config)

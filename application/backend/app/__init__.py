@@ -42,9 +42,9 @@ def create_app(environment):
     app.wsgi_app = ReverseProxied(app.wsgi_app)
     # Turn of redirect from /[endpoint] to /[endpoint]/ (as this gives a CORS error on preflight redirect)
     app.url_map.strict_slashes = False
-    app.secret_key = os.environ.get("SECRET_KEY")
-    app.config.from_object(environment.get("base"))
-    FRONTEND_URI = os.environ.get("FRONTEND_URI").rstrip('/')
+    app.config.from_object(environment.get(app.config["ENV"]))
+    app.secret_key = app.config["SECRET_KEY"]
+    FRONTEND_URI = app.config["FRONTEND_URI"]
     # Logging for heroku
     app.logger.handlers.clear()
     logging_handler = logging.StreamHandler(sys.stdout)
@@ -72,7 +72,7 @@ def create_app(environment):
 
     broker.init_app(
       app,
-      os.environ.get('MQ_EVENT_QUEUE'),
+      app.config["MQ_EVENT_QUEUE"],
       json.loads,
       dumps_parser
     )
@@ -110,7 +110,7 @@ def create_app(environment):
     if app.config["ENV"] == "production":
         origins = [FRONTEND_URI]
         resources_origins = {"origins": origins}
-    elif app.config["ENV"] == "development":
+    elif app.config["ENV"] == "development" or app.config["ENV"] == "test":
         origins = ["https://localhost"]
         resources_origins = {"origins": origins}
     CORS(
