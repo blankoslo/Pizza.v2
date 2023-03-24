@@ -122,21 +122,26 @@ def users(db, slack_organizations):
 
 
 @pytest.fixture
-def restaurant(db, slack_organizations):
+def restaurants(db, slack_organizations):
     restaurant1 = Restaurant(
-        name="dontCareRestaurant",
+        name="dontCareRestaurant1",
         slack_organization_id=slack_organizations[0].team_id
     )
     restaurant2 = Restaurant(
-        name="dontCareRestaurant",
+        name="dontCareRestaurant2",
+        slack_organization_id=slack_organizations[0].team_id
+    )
+    restaurant3 = Restaurant(
+        name="dontCareRestaurant1",
         slack_organization_id=slack_organizations[1].team_id
     )
     db.session.add(restaurant1)
     db.session.add(restaurant2)
+    db.session.add(restaurant3)
     db.session.commit()
     return {
-        slack_organizations[0].team_id: [restaurant1],
-        slack_organizations[1].team_id: [restaurant2]
+        slack_organizations[0].team_id: [restaurant1, restaurant2],
+        slack_organizations[1].team_id: [restaurant3]
     }
 
 
@@ -181,23 +186,23 @@ def groups(db, slack_organizations, slack_user):
 
 
 @pytest.fixture
-def events(db, restaurant, groups, slack_organizations):
+def events(db, restaurants, groups, slack_organizations):
     event1 = Event(
         time="2023-03-30T16:23:05.420Z",
-        restaurant_id=restaurant.get(slack_organizations[0].team_id)[0].id,
+        restaurant_id=restaurants.get(slack_organizations[0].team_id)[0].id,
         people_per_event=5,
         slack_organization_id=slack_organizations[0].team_id,
         group_id=groups.get(slack_organizations[0].team_id)[0].id
     )
     event2 = Event(
         time="2023-04-24T16:23:05.420Z",
-        restaurant_id=restaurant.get(slack_organizations[0].team_id)[0].id,
+        restaurant_id=restaurants.get(slack_organizations[0].team_id)[0].id,
         people_per_event=5,
         slack_organization_id=slack_organizations[0].team_id
     )
     event3 = Event(
         time="2023-04-24T16:23:05.420Z",
-        restaurant_id=restaurant.get(slack_organizations[1].team_id)[0].id,
+        restaurant_id=restaurants.get(slack_organizations[1].team_id)[0].id,
         people_per_event=5,
         slack_organization_id=slack_organizations[1].team_id
     )
