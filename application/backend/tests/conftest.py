@@ -82,40 +82,64 @@ def migrate(app, db):
 
 
 @pytest.fixture
-def slack_organization(app, db, migrate):
-    slack_organization = SlackOrganization(team_id="testSlackOrganizationId")
-    db.session.add(slack_organization)
+def slack_organizations(app, db, migrate):
+    slack_organization1 = SlackOrganization(team_id="testSlackOrganizationId1")
+    slack_organization2 = SlackOrganization(team_id="testSlackOrganizationId2")
+    db.session.add(slack_organization1)
+    db.session.add(slack_organization2)
     db.session.commit()
-    return slack_organization
+    return [
+        slack_organization1,
+        slack_organization2
+    ]
 
 
 @pytest.fixture
-def user(db, slack_organization):
-    user = User(
-        id="testUserId",
-        email="dont@care.invalid",
+def users(db, slack_organizations):
+    user1 = User(
+        id="testUserId1",
+        email="dont@care1.invalid",
         name="dontCare",
         picture="doesntExist",
-        slack_organization_id=slack_organization.team_id
+        slack_organization_id=slack_organizations[0].team_id
     )
-    db.session.add(user)
+    user2 = User(
+        id="testUserId2",
+        email="dont@care2.invalid",
+        name="dontCare",
+        picture="doesntExist",
+        slack_organization_id=slack_organizations[1].team_id
+    )
+    db.session.add(user1)
+    db.session.add(user2)
     db.session.commit()
-    return user
+    return {
+        slack_organizations[0].team_id: user1,
+        slack_organizations[1].team_id: user2
+    }
 
 
 @pytest.fixture
-def restaurant(db, slack_organization):
-    restaurant = Restaurant(
+def restaurant(db, slack_organizations):
+    restaurant1 = Restaurant(
         name="dontCareRestaurant",
-        slack_organization_id=slack_organization.team_id
+        slack_organization_id=slack_organizations[0].team_id
     )
-    db.session.add(restaurant)
+    restaurant2 = Restaurant(
+        name="dontCareRestaurant",
+        slack_organization_id=slack_organizations[1].team_id
+    )
+    db.session.add(restaurant1)
+    db.session.add(restaurant2)
     db.session.commit()
-    return restaurant
+    return {
+        slack_organizations[0].team_id: [restaurant1],
+        slack_organizations[1].team_id: [restaurant2]
+    }
 
 
 @pytest.fixture
-def slack_user(db, slack_organization):
+def slack_user(db, slack_organizations):
     slack_user = SlackUser(
         slack_id="dontCareSlackId",
         current_username="dontCareUsername",
@@ -123,41 +147,56 @@ def slack_user(db, slack_organization):
         active=True,
         priority=1,
         email="dontCare@email.invalid",
-        slack_organization_id=slack_organization.team_id
+        slack_organization_id=slack_organizations[0].team_id
     )
     db.session.add(slack_user)
     db.session.commit()
-    return slack_user
+    return {
+        slack_organizations[0].team_id: [slack_user],
+        slack_organizations[1].team_id: []
+    }
 
 
 @pytest.fixture
-def group(db, slack_organization, slack_user):
-    group = Group(
+def groups(db, slack_organizations, slack_user):
+    group1 = Group(
         name="dontCareGroup",
-        members=[slack_user],
-        slack_organization_id=slack_organization.team_id
+        members=slack_user.get(slack_organizations[0].team_id),
+        slack_organization_id=slack_organizations[0].team_id
     )
-    db.session.add(group)
+    group2 = Group(
+        name="dontCareGroup",
+        members=slack_user.get(slack_organizations[1].team_id),
+        slack_organization_id=slack_organizations[1].team_id
+    )
+    db.session.add(group1)
+    db.session.add(group2)
     db.session.commit()
-    return group
+    return {
+        slack_organizations[0].team_id: [group1],
+        slack_organizations[1].team_id: [group2]
+    }
 
 
 @pytest.fixture
-def events(db, restaurant, group, slack_organization):
+def events(db, restaurant, groups, slack_organizations):
     event1 = Event(
         time="2023-03-30T16:23:05.420Z",
-        restaurant_id=restaurant.id,
+        restaurant_id=restaurant.get(slack_organizations[0].team_id)[0].id,
         people_per_event=5,
-        slack_organization_id=slack_organization.team_id,
-        group_id=group.id
+        slack_organization_id=slack_organizations[0].team_id,
+        group_id=groups.get(slack_organizations[0].team_id)[0].id
     )
     event2 = Event(
         time="2023-04-24T16:23:05.420Z",
-        restaurant_id=restaurant.id,
+        restaurant_id=restaurant.get(slack_organizations[0].team_id)[0].id,
         people_per_event=5,
-        slack_organization_id=slack_organization.team_id
+        slack_organization_id=slack_organizations[0].team_id
     )
     db.session.add(event1)
     db.session.add(event2)
     db.session.commit()
-    return [event1, event2]
+    return {
+        slack_organizations[0].team_id: [event1, event2],
+        slack_organizations[1].team_id: []
+    }
