@@ -85,7 +85,7 @@ class TestEventsSuit:
         response = self.client.post(url_for('api.events.Events', method='post'), headers=headers, json=payload)
         assert response.status_code == 201
 
-    def test_events_post_no_group_not_owned_restaurant(self, slack_organizations, users, restaurant):
+    def test_events_post_not_owned_restaurant(self, slack_organizations, users, restaurant):
         user = users.get(slack_organizations[0].team_id)
 
         token = create_access_token(identity=user)
@@ -98,7 +98,7 @@ class TestEventsSuit:
         response = self.client.post(url_for('api.events.Events', method='post'), headers=headers, json=payload)
         assert response.status_code == 400
 
-    def test_events_post_no_group_not_owned_group(self, slack_organizations, users, restaurant, groups):
+    def test_events_post_not_owned_group(self, slack_organizations, users, restaurant, groups):
         user = users.get(slack_organizations[0].team_id)
 
         token = create_access_token(identity=user)
