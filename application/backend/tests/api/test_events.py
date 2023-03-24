@@ -63,7 +63,6 @@ class TestEventsSuit:
         assert len(response_data) == 2
         self._assert_event(response_events=response_data, events=events)
 
-
     def test_events_post_no_group(self, slack_organizations, users, restaurants):
         user = users.get(slack_organizations[0].team_id)
 
@@ -184,7 +183,7 @@ class TestEventsSuit:
             "restaurant_id": restaurants.get(slack_organizations[1].team_id)[0].id,
         }
         response = self.client.patch(url_for('api.events.EventsById', method='patch', event_id=event.id), headers=headers, json=payload)
-        assert response.status_code == 400
+        assert response.status_code == 404
 
     def test_events_by_id_delete(self, slack_organizations, users, events):
         user = users.get(slack_organizations[0].team_id)

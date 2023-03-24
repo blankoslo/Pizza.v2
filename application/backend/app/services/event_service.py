@@ -108,6 +108,11 @@ class EventService:
         old_time = event.time
         old_restaurant_name = event.restaurant.name
 
+        if 'restaurant_id' in data:
+            new_restaurant = Restaurant.get_by_id(data['restaurant_id'])
+            if new_restaurant.slack_organization_id != team_id:
+                return None
+
         updated_event = Event.update(event_id, data)
 
         attending_or_unanswered_users = [invitation.slack_id for invitation in InvitationRepository.get_attending_or_unanswered_invitations(event.id)]
