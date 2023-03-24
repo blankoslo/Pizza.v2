@@ -48,9 +48,11 @@ def environment_variables(postgresql_url, monkeypatch):
     monkeypatch.setenv('SECRET_KEY', 'verySuperSecretKey')
 
 
+
 @pytest.fixture
 def app(mocker, environment_variables):
     mocker.patch('app.application.broker')
+    mocker.patch('app.services.broker.broker')
     config = {
         "base": "app.config.Base",
         "test": "app.config.Test",
@@ -83,8 +85,8 @@ def migrate(app, db):
 
 @pytest.fixture
 def slack_organizations(app, db, migrate):
-    slack_organization1 = SlackOrganization(team_id="testSlackOrganizationId1")
-    slack_organization2 = SlackOrganization(team_id="testSlackOrganizationId2")
+    slack_organization1 = SlackOrganization(team_id="testSlackOrganizationId1", access_token="dontCareBotToken", channel_id="dontCareChannelId")
+    slack_organization2 = SlackOrganization(team_id="testSlackOrganizationId2", access_token="dontCareBotToken", channel_id="dontCareChannelId")
     db.session.add(slack_organization1)
     db.session.add(slack_organization2)
     db.session.commit()

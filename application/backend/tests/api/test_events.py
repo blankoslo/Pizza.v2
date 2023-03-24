@@ -145,10 +145,20 @@ class TestEventsSuit:
         user = users.get(slack_organizations[0].team_id)
         pass
 
-    def test_events_by_id_delete(self, slack_organizations, users):
+    def test_events_by_id_delete(self, slack_organizations, users, events):
         user = users.get(slack_organizations[0].team_id)
-        pass
+        event = events.get(slack_organizations[0].team_id)[0]
 
-    def test_events_by_id_delete_not_owned(self, slack_organizations, users):
+        token = create_access_token(identity=user)
+        headers = {"Authorization": f"Bearer {token}"}
+        response = self.client.delete(url_for('api.events.EventsById', method='delete', event_id=event.id), headers=headers)
+        assert response.status_code == 204
+
+    def test_events_by_id_delete_not_owned(self, slack_organizations, users, events):
         user = users.get(slack_organizations[0].team_id)
-        pass
+        event = events.get(slack_organizations[1].team_id)[0]
+
+        token = create_access_token(identity=user)
+        headers = {"Authorization": f"Bearer {token}"}
+        response = self.client.delete(url_for('api.events.EventsById', method='delete', event_id=event.id), headers=headers)
+        assert response.status_code == 400

@@ -27,6 +27,7 @@ class Test(Base):
     FRONTEND_URI = 'localhost'
     SLACK_CLIENT_ID = 'dontCareSlackClientId'
     MQ_EVENT_QUEUE = 'dontCareMqEventQueue'
+    MQ_EVENT_KEY = 'dontCareMqEventKey'
     CLOUDINARY_CLOUD_NAME = 'dontCareCloudinaryCloudName'
     CLOUDINARY_API_KEY = 'dontCareCloudinaryApiKey'
     CLOUDINARY_API_SECRET = 'dontCareCloudinaryApiSecret'
