@@ -146,34 +146,44 @@ def restaurants(db, slack_organizations):
 
 
 @pytest.fixture
-def slack_user(db, slack_organizations):
-    slack_user = SlackUser(
-        slack_id="dontCareSlackId",
+def slack_users(db, slack_organizations):
+    slack_user1 = SlackUser(
+        slack_id="dontCareSlackId1",
         current_username="dontCareUsername",
         first_seen="2023-03-24T16:23:05.420Z",
         active=True,
         priority=1,
-        email="dontCare@email.invalid",
+        email="dontCare@email1.invalid",
         slack_organization_id=slack_organizations[0].team_id
     )
-    db.session.add(slack_user)
+    slack_user2 = SlackUser(
+        slack_id="dontCareSlackId2",
+        current_username="dontCareUsername",
+        first_seen="2023-03-24T16:23:05.420Z",
+        active=True,
+        priority=1,
+        email="dontCare@email2.invalid",
+        slack_organization_id=slack_organizations[1].team_id
+    )
+    db.session.add(slack_user1)
+    db.session.add(slack_user2)
     db.session.commit()
     return {
-        slack_organizations[0].team_id: [slack_user],
-        slack_organizations[1].team_id: []
+        slack_organizations[0].team_id: [slack_user1],
+        slack_organizations[1].team_id: [slack_user2]
     }
 
 
 @pytest.fixture
-def groups(db, slack_organizations, slack_user):
+def groups(db, slack_organizations, slack_users):
     group1 = Group(
         name="dontCareGroup",
-        members=slack_user.get(slack_organizations[0].team_id),
+        members=slack_users.get(slack_organizations[0].team_id),
         slack_organization_id=slack_organizations[0].team_id
     )
     group2 = Group(
         name="dontCareGroup",
-        members=slack_user.get(slack_organizations[1].team_id),
+        members=slack_users.get(slack_organizations[1].team_id),
         slack_organization_id=slack_organizations[1].team_id
     )
     db.session.add(group1)
