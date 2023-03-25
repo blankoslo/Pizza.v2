@@ -44,10 +44,10 @@ def assert_groups(response_groups, groups):
         assert response_group["name"] == group.name
 
         # members in group
-        assert_slack_user(response_slack_users=response_group["members"], slack_users=group.members)
+        assert_slack_users(response_slack_users=response_group["members"], slack_users=group.members)
 
 
-def assert_slack_user(response_slack_users, slack_users):
+def assert_slack_users(response_slack_users, slack_users):
     expected_slack_users_keys = ["slack_id", "current_username", "first_seen", "active", "priority", "email"]
     assert all(set(expected_slack_users_keys) == set(d.keys()) for d in response_slack_users)
 
@@ -75,7 +75,7 @@ def assert_images(response_images, images):
         assert response_image["uploaded_at"] == image.uploaded_at.isoformat()
         assert response_image["title"] == image.title
 
-        assert_slack_user(response_slack_users=[response_image["uploaded_by"]], slack_users=[image.uploaded_by])
+        assert_slack_users(response_slack_users=[response_image["uploaded_by"]], slack_users=[image.uploaded_by])
 
 def assert_restaurants(response_restaurants, restaurants):
     expected_restaurants_keys = ["name", "link", "tlf", "address", "rating", "id"]

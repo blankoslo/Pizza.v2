@@ -56,7 +56,7 @@ class TestImagesSuit:
         response = self.client.delete(url_for('api.images.ImagesById', method='delete', image_id=image.cloudinary_id), headers=headers)
         assert response.status_code == 400
 
-    def test_events_endpoint_authentication(self, images, slack_organizations):
+    def test_images_endpoint_authentication(self, images, slack_organizations):
         image = images.get(slack_organizations[0].team_id)[0]
 
         response = self.client.get(url_for('api.images.Images', method='get'))
