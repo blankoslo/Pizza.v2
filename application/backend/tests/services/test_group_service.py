@@ -1,5 +1,4 @@
 import pytest
-from datetime import datetime, timedelta
 from app.services.group_service import GroupService
 from app.models.group import Group
 
