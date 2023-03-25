@@ -49,5 +49,5 @@ class InvitationsByEventAndUserId(views.MethodView):
         invitation_service = injector.get(InvitationService)
         updated_invitation = invitation_service.update_invitation_status(event_id=event_id, user_id=user_id, rsvp=update_data['rsvp'], team_id=current_user.slack_organization_id)
         if updated_invitation is None:
-            abort(422, message = "Invitation not found.")
+            abort(404, message = "Invitation not found.")
         return updated_invitation
