@@ -163,14 +163,24 @@ def slack_users(db, slack_organizations):
         active=True,
         priority=1,
         email="dontCare@email2.invalid",
+        slack_organization_id=slack_organizations[0].team_id
+    )
+    slack_user3 = SlackUser(
+        slack_id="dontCareSlackId3",
+        current_username="dontCareUsername",
+        first_seen="2023-03-24T16:23:05.420Z",
+        active=True,
+        priority=1,
+        email="dontCare@email3.invalid",
         slack_organization_id=slack_organizations[1].team_id
     )
     db.session.add(slack_user1)
     db.session.add(slack_user2)
+    db.session.add(slack_user3)
     db.session.commit()
     return {
-        slack_organizations[0].team_id: [slack_user1],
-        slack_organizations[1].team_id: [slack_user2]
+        slack_organizations[0].team_id: [slack_user1, slack_user2],
+        slack_organizations[1].team_id: [slack_user3]
     }
 
 
