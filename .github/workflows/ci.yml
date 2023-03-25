@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-      - 'applications/backend/**'
+      - 'application/backend/**'
   push:
     branches:
       - main
     paths:
-      - 'applications/backend/**'
+      - 'application/backend/**'
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -22,11 +22,11 @@ jobs:
         with:
           python-version: 3.9.13
       - name: Install dependencies
-        working-directory: applications/backend
-        run: pip install -r applications/backend/requirements.txt
+        working-directory: application/backend
+        run: pip install -r application/backend/requirements.txt
       - name: Install test dependencies
-        working-directory: applications/backend
-        run: pip install -r applications/backend/requirements-test.txt
+        working-directory: application/backend
+        run: pip install -r application/backend/requirements-test.txt
       - name: Run Pytest
-        working-directory: applications/backend
+        working-directory: application/backend
         run: pytest tests
