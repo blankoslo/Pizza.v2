@@ -10,6 +10,7 @@ from app.models.restaurant import Restaurant
 from app.models.event import Event
 from app.models.slack_user import SlackUser
 from app.models.group import Group
+from app.models.image import Image
 from sqlalchemy import text
 
 database_name = "pizza"
@@ -181,6 +182,31 @@ def slack_users(db, slack_organizations):
     return {
         slack_organizations[0].team_id: [slack_user1, slack_user2],
         slack_organizations[1].team_id: [slack_user3]
+    }
+
+
+@pytest.fixture
+def images(db, slack_organizations, slack_users):
+    image1 = Image(
+        slack_organization_id=slack_organizations[0].team_id,
+        cloudinary_id="dontCareCloudinaryId1",
+        uploaded_by_id=slack_users.get(slack_organizations[0].team_id)[0].slack_id,
+        uploaded_at="2023-03-24T16:23:05.420Z",
+        title="dontCareTitle"
+    )
+    image2 = Image(
+        slack_organization_id=slack_organizations[1].team_id,
+        cloudinary_id="dontCareCloudinaryId2",
+        uploaded_by_id=slack_users.get(slack_organizations[1].team_id)[0].slack_id,
+        uploaded_at="2023-03-24T16:23:05.420Z",
+        title="dontCareTitle"
+    )
+    db.session.add(image1)
+    db.session.add(image2)
+    db.session.commit()
+    return {
+        slack_organizations[0].team_id: [image1],
+        slack_organizations[1].team_id: [image2]
     }
 
 

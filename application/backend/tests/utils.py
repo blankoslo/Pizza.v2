@@ -60,3 +60,20 @@ def assert_slack_user(response_slack_users, slack_users):
         assert response_members_sorted[i]["active"] == member.active
         assert response_members_sorted[i]["priority"] == member.priority
         assert response_members_sorted[i]["email"] == member.email
+
+
+def assert_images(response_images, images):
+    expected_image_keys = ["cloudinary_id", "uploaded_by_id", "uploaded_by", "uploaded_at", "title"]
+    assert all(set(expected_image_keys) == set(d.keys()) for d in response_images)
+
+    images_sorted = sorted(images, key=lambda x: x.cloudinary_id)
+    response_images_sorted = sorted(response_images, key=lambda x: x['cloudinary_id'])
+    for i, image in enumerate(images_sorted):
+        response_image = response_images_sorted[i]
+        assert response_image["cloudinary_id"] == image.cloudinary_id
+        assert response_image["uploaded_by_id"] == image.uploaded_by_id
+        assert response_image["uploaded_at"] == image.uploaded_at.isoformat()
+        assert response_image["title"] == image.title
+
+        assert_slack_user(response_slack_users=[response_image["uploaded_by"]], slack_users=[image.uploaded_by])
+
