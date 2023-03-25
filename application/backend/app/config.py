@@ -38,6 +38,10 @@ class Production(Base):
     # RabbitMQ - CLOUDAMQP_URL is the environment variable created by heroku during production deployment
     MQ_URL = os.environ.get('MQ_URL') if 'MQ_URL' in os.environ else os.environ.get('CLOUDAMQP_URL')
     MQ_EXCHANGE = os.environ.get('MQ_EXCHANGE')
+    MQ_EVENT_QUEUE = os.environ.get('MQ_EVENT_QUEUE')
+    MQ_EVENT_KEY = os.environ.get('MQ_EVENT_KEY')
+    MQ_RPC_KEY = os.environ.get('MQ_RPC_KEY')
+    DAYS_IN_ADVANCE_TO_INVITE = os.environ.get('DAYS_IN_ADVANCE_TO_INVITE')
     SLACK_CLIENT_ID = os.environ.get('SLACK_CLIENT_ID')
     SLACK_CLIENT_SECRET = os.environ.get('SLACK_CLIENT_SECRET')
     CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME')
