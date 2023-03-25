@@ -77,3 +77,18 @@ def assert_images(response_images, images):
 
         assert_slack_user(response_slack_users=[response_image["uploaded_by"]], slack_users=[image.uploaded_by])
 
+def assert_restaurants(response_restaurants, restaurants):
+    expected_restaurants_keys = ["name", "link", "tlf", "address", "rating", "id"]
+    print(response_restaurants[0])
+    assert all(set(expected_restaurants_keys) == set(d.keys()) for d in response_restaurants)
+
+    restaurants_sorted = sorted(restaurants, key=lambda x: x.id)
+    response_restaurants_sorted = sorted(response_restaurants, key=lambda x: x['id'])
+    for i, restaurant in enumerate(restaurants_sorted):
+        response_restaurant = response_restaurants_sorted[i]
+        assert response_restaurant["id"] == str(restaurant.id)
+        assert response_restaurant["name"] == restaurant.name
+        assert response_restaurant["link"] == restaurant.link
+        assert response_restaurant["tlf"] == restaurant.tlf
+        assert response_restaurant["address"] == restaurant.address
+        assert response_restaurant["rating"] == restaurant.rating
