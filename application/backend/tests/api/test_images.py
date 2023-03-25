@@ -55,3 +55,13 @@ class TestImagesSuit:
         headers = {"Authorization": f"Bearer {token}"}
         response = self.client.delete(url_for('api.images.ImagesById', method='delete', image_id=image.cloudinary_id), headers=headers)
         assert response.status_code == 400
+
+    def test_events_endpoint_authentication(self, images, slack_organizations):
+        image = images.get(slack_organizations[0].team_id)[0]
+
+        response = self.client.get(url_for('api.images.Images', method='get'))
+        assert response.status_code == 401
+        response = self.client.get(url_for('api.images.ImagesById', method='get', image_id=image.cloudinary_id))
+        assert response.status_code == 401
+        response = self.client.delete(url_for('api.images.ImagesById', method='delete', image_id=image.cloudinary_id))
+        assert response.status_code == 401
