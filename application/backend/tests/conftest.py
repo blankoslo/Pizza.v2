@@ -1,4 +1,5 @@
 import pytest
+import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, upgrade
 from pytest_postgresql import factories
@@ -81,7 +82,8 @@ def db(app):
 @pytest.fixture(autouse=True)
 def migrate(app, db):
     migrate = Migrate(app, db)
-    upgrade('../migrations')
+    migrations_path = os.path.dirname(os.path.abspath(__file__)) + '/../migrations'
+    upgrade(migrations_path)
     return migrate
 
 
