@@ -8,6 +8,7 @@ from app.models.user import User
 from app.models.slack_organization import SlackOrganization
 from app.models.restaurant import Restaurant
 from app.models.event import Event
+from app.models.invitation import Invitation
 from app.models.slack_user import SlackUser
 from app.models.group import Group
 from app.models.image import Image
@@ -259,4 +260,27 @@ def events(db, restaurants, groups, slack_organizations):
     return {
         slack_organizations[0].team_id: [event1, event2],
         slack_organizations[1].team_id: [event3]
+    }
+
+@pytest.fixture
+def invitations(db, events, slack_users, slack_organizations):
+    invitation1 = Invitation(
+        event_id=events.get(slack_organizations[0].team_id)[0].id,
+        slack_id=slack_users.get(slack_organizations[0].team_id)[0].slack_id
+    )
+    invitation2 = Invitation(
+        event_id=events.get(slack_organizations[0].team_id)[1].id,
+        slack_id=slack_users.get(slack_organizations[0].team_id)[0].slack_id
+    )
+    invitation3 = Invitation(
+        event_id=events.get(slack_organizations[1].team_id)[0].id,
+        slack_id=slack_users.get(slack_organizations[1].team_id)[0].slack_id
+    )
+
+    db.session.add(invitation1)
+    db.session.add(invitation2)
+    db.session.commit()
+    return {
+        slack_organizations[0].team_id: [invitation1, invitation2],
+        slack_organizations[1].team_id: [invitation3]
     }

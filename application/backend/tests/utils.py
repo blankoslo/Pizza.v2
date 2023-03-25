@@ -92,3 +92,19 @@ def assert_restaurants(response_restaurants, restaurants):
         assert response_restaurant["tlf"] == restaurant.tlf
         assert response_restaurant["address"] == restaurant.address
         assert response_restaurant["rating"] == restaurant.rating
+
+def assert_invitations(response_invitations, invitations):
+    expected_invitation_keys = ["event_id", "slack_id", "slack_user", "invited_at", "rsvp", "reminded_at"]
+    assert all(set(expected_invitation_keys) == set(d.keys()) for d in response_invitations)
+
+    invitations_sorted = sorted(invitations, key=lambda x: (x.event_id, x.slack_id))
+    response_invitations_sorted = sorted(response_invitations, key=lambda x: (x['event_id'], x['slack_id']))
+    for i, restaurant in enumerate(invitations_sorted):
+        response_restaurant = response_invitations_sorted[i]
+        assert response_restaurant["event_id"] == str(restaurant.event_id)
+        assert response_restaurant["slack_id"] == restaurant.slack_id
+        assert response_restaurant["invited_at"] == restaurant.invited_at.isoformat()
+        assert response_restaurant["rsvp"] == restaurant.rsvp
+        assert response_restaurant["reminded_at"] == restaurant.reminded_at.isoformat()
+
+        assert_slack_users(response_slack_users=[response_restaurant["slack_user"]], slack_users=[restaurant.slack_user])
