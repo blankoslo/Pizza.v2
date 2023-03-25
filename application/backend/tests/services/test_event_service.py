@@ -4,6 +4,7 @@ from app.services.event_service import EventService
 from app.models.event import Event
 from app.models.invitation import Invitation
 from app.models.enums import RSVP
+import pytz
 
 @pytest.fixture
 def event_service():
@@ -104,26 +105,45 @@ class TestEventServiceSuit:
         assert len(mock_broker.send.call_args_list) == 1
         assert mock_broker.send.call_args_list[0].args[0]['type'] == 'deleted_event'
 
-    def test_add(self, slack_organizations, restaurants, event_service):
+    def test_add(self, slack_organizations, restaurants, groups, event_service):
         team_id = slack_organizations[0].team_id
+        group = groups.get(team_id)[0]
 
         data = Event(
             time=datetime.today() + timedelta(days=3),
             restaurant_id=restaurants.get(slack_organizations[0].team_id)[0].id,
             people_per_event=2,
+            group_id=group.id
         )
         event_service.add(data=data, team_id=team_id)
 
         test_events = Event.query.all()
         assert len(test_events) == 1
 
-    def test_update(self, slack_organizations, events, mock_broker, event_service):
+    def test_update(self, slack_organizations, events, groups, restaurants, mock_broker, event_service):
         team_id = slack_organizations[0].team_id
         event = events.get(team_id)[0]
+        group = groups.get(team_id)[0]
+        restaurant = restaurants.get(team_id)[0]
 
-        event_service.update(event_id=event.id, data={'people_per_event': 8}, team_id=team_id)
+        date = datetime.now(pytz.timezone('Europe/Oslo')) + timedelta(days=5)
 
-        assert Event.query.get(event.id).people_per_event == 8
+        event_service.update(
+            event_id=event.id,
+            data={
+                'people_per_event': 8,
+                'time': date,
+                'restaurant_id': restaurant.id,
+                'group_id': group.id
+            },
+            team_id=team_id
+        )
+
+        updated_event = Event.query.get(event.id)
+        assert updated_event.people_per_event == 8
+        assert updated_event.time == date
+        assert updated_event.restaurant_id == restaurant.id
+        assert updated_event.group_id == group.id
         mock_broker.send.assert_called()
         assert len(mock_broker.send.call_args_list) == 1
         assert mock_broker.send.call_args_list[0].args[0]['type'] == 'updated_event'
