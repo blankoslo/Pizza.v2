@@ -117,5 +117,13 @@ class TestEventServiceSuit:
         test_events = Event.query.all()
         assert len(test_events) == 1
 
-    def test_update(self, slack_organizations, events, event_service):
-        pass
+    def test_update(self, slack_organizations, events, mock_broker, event_service):
+        team_id = slack_organizations[0].team_id
+        event = events.get(team_id)[0]
+
+        event_service.update(event_id=event.id, data={'people_per_event': 8}, team_id=team_id)
+
+        assert Event.query.get(event.id).people_per_event == 8
+        mock_broker.send.assert_called()
+        assert len(mock_broker.send.call_args_list) == 1
+        assert mock_broker.send.call_args_list[0].args[0]['type'] == 'updated_event'
