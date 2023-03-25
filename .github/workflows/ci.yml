@@ -23,10 +23,10 @@ jobs:
           python-version: 3.9.13
       - name: Install dependencies
         working-directory: application/backend
-        run: pip install -r application/backend/requirements.txt
+        run: pip install -r requirements.txt
       - name: Install test dependencies
         working-directory: application/backend
-        run: pip install -r application/backend/requirements-test.txt
+        run: pip install -r requirements-test.txt
       - name: Run Pytest
         working-directory: application/backend
         run: pytest tests
