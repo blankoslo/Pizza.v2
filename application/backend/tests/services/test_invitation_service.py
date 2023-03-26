@@ -152,14 +152,200 @@ class TestInvitationServiceSuit:
         assert mock_broker.send.call_args_list[0].args[0]['type'] == 'finalization'
         assert mock_broker.send.call_args_list[1].args[0]['type'] == 'updated_invitation'
 
-    def test_update_invitation_status_decline(self, db, slack_organizations, slack_users, restaurants, invitation_service):
-        pass
+    def test_update_invitation_status_decline(self, db, slack_organizations, slack_users, restaurants, event_service_mock, mock_broker, invitation_service):
+        # Setup data
+        team_id = slack_organizations[0].team_id
+        restaurant = restaurants.get(team_id)[0]
+        slack_users = slack_users.get(team_id)
 
-    def test_update_invitation_status_unanswered(self, db, slack_organizations, slack_users, restaurants, invitation_service):
-        pass
+        event = Event(
+            time=datetime.today() + timedelta(days=1),
+            restaurant_id=restaurant.id,
+            people_per_event=2,
+            slack_organization_id=team_id
+        )
+        db.session.add(event)
+        db.session.commit()
+        invitation = Invitation(
+            event_id=event.id,
+            slack_id=slack_users[0].slack_id,
+            rsvp=RSVP.attending
+        )
+        db.session.add(invitation)
+        db.session.commit()
 
-    def test_update_invitation_status_withdraw(self, db, slack_organizations, slack_users, restaurants, invitation_service):
-        pass
+        # Setup mock side effects
+        def event_service_get_by_id_side_effect(id):
+            if id == event.id:
+                return event
+            return None
+        event_get_by_id = MagicMock()
+        event_get_by_id.side_effect = event_service_get_by_id_side_effect
+        event_service_mock.get_by_id = event_get_by_id
 
-    def test_update_invitation_status_expired(self, db, slack_organizations, slack_users, restaurants, invitation_service):
-        pass
+        # Action
+        invitation_service.update_invitation_status(event_id=invitation.event_id, user_id=invitation.slack_id, rsvp=RSVP.not_attending)
+
+        # Get assert data
+        test_invitation = Invitation.query.get((invitation.event_id, invitation.slack_id))
+        test_event = Event.query.get(invitation.event_id)
+
+        # Assert
+        assert test_invitation.rsvp is RSVP.not_attending
+        mock_broker.send.assert_called()
+        assert len(mock_broker.send.call_args_list) == 1
+        assert mock_broker.send.call_args_list[0].args[0]['type'] == 'updated_invitation'
+
+    def test_update_invitation_status_unanswered(self, db, slack_organizations, slack_users, restaurants, event_service_mock, mock_broker, invitation_service):
+        # Setup data
+        team_id = slack_organizations[0].team_id
+        restaurant = restaurants.get(team_id)[0]
+        slack_users = slack_users.get(team_id)
+
+        event = Event(
+            time=datetime.today() + timedelta(days=1),
+            restaurant_id=restaurant.id,
+            people_per_event=2,
+            slack_organization_id=team_id
+        )
+        db.session.add(event)
+        db.session.commit()
+        invitation = Invitation(
+            event_id=event.id,
+            slack_id=slack_users[0].slack_id,
+            rsvp=RSVP.attending
+        )
+        db.session.add(invitation)
+        db.session.commit()
+
+        # Setup mock side effects
+        def event_service_get_by_id_side_effect(id):
+            if id == event.id:
+                return event
+            return None
+        event_get_by_id = MagicMock()
+        event_get_by_id.side_effect = event_service_get_by_id_side_effect
+        event_service_mock.get_by_id = event_get_by_id
+
+        # Action
+        invitation_service.update_invitation_status(event_id=invitation.event_id, user_id=invitation.slack_id, rsvp=RSVP.unanswered)
+
+        # Get assert data
+        test_invitation = Invitation.query.get((invitation.event_id, invitation.slack_id))
+
+        # Assert
+        assert test_invitation.rsvp is RSVP.unanswered
+        mock_broker.send.assert_called()
+        assert len(mock_broker.send.call_args_list) == 1
+        assert mock_broker.send.call_args_list[0].args[0]['type'] == 'updated_invitation'
+
+    def test_update_invitation_status_withdraw(self, db, slack_organizations, slack_users, restaurants, event_service_mock, restaurant_service_mock, mock_broker, invitation_service):
+        # Setup data
+        team_id = slack_organizations[0].team_id
+        restaurant = restaurants.get(team_id)[0]
+        slack_users = slack_users.get(team_id)
+
+        event = Event(
+            time=datetime.today() + timedelta(days=1),
+            restaurant_id=restaurant.id,
+            people_per_event=2,
+            slack_organization_id=team_id,
+            finalized=True,
+        )
+        db.session.add(event)
+        db.session.commit()
+        invitation1 = Invitation(
+            event_id=event.id,
+            slack_id=slack_users[0].slack_id,
+            rsvp=RSVP.attending
+        )
+        invitation2 = Invitation(
+            event_id=event.id,
+            slack_id=slack_users[1].slack_id,
+            rsvp=RSVP.attending
+        )
+        db.session.add(invitation1)
+        db.session.add(invitation2)
+        db.session.commit()
+
+        # Setup mock side effects
+        def restaurant_service_get_by_id_side_effect(id):
+            if id == restaurant.id:
+                return restaurant
+            return None
+        def event_service_get_by_id_side_effect(id):
+            if id == event.id:
+                return event
+            return None
+        def unfinalize_event_side_effect(id):
+            print("inside", id, event.id)
+            if id == event.id:
+                event.finalized = False
+                db.session.commit()
+                return True
+            return False
+        restaurant_get_by_id = MagicMock()
+        event_get_by_id = MagicMock()
+        unfinalize_event = MagicMock()
+        restaurant_get_by_id.side_effect = restaurant_service_get_by_id_side_effect
+        event_get_by_id.side_effect = event_service_get_by_id_side_effect
+        unfinalize_event.side_effect = unfinalize_event_side_effect
+        restaurant_service_mock.get_by_id = restaurant_get_by_id
+        event_service_mock.get_by_id = event_get_by_id
+        event_service_mock.unfinalize_event = unfinalize_event
+
+        # Action
+        invitation_service.update_invitation_status(event_id=invitation2.event_id, user_id=invitation2.slack_id, rsvp=RSVP.not_attending)
+
+        # Get assert data
+        test_invitation = Invitation.query.get((invitation2.event_id, invitation2.slack_id))
+        test_event = Event.query.get(invitation2.event_id)
+
+        # Assert
+        assert test_invitation.rsvp is RSVP.not_attending
+        assert test_event.finalized is False
+        mock_broker.send.assert_called()
+        assert len(mock_broker.send.call_args_list) == 3
+        assert mock_broker.send.call_args_list[0].args[0]['type'] == 'user_withdrew_after_finalization'
+        assert mock_broker.send.call_args_list[1].args[0]['type'] == 'finalization'
+        assert mock_broker.send.call_args_list[2].args[0]['type'] == 'updated_invitation'
+
+    def test_update_invitation_status_expired(self, db, slack_organizations, slack_users, restaurants, event_service_mock, invitation_service):
+        # Setup data
+        team_id = slack_organizations[0].team_id
+        restaurant = restaurants.get(team_id)[0]
+        slack_users = slack_users.get(team_id)
+
+        event = Event(
+            time=datetime.today() + timedelta(days=-1),
+            restaurant_id=restaurant.id,
+            people_per_event=2,
+            slack_organization_id=team_id
+        )
+        db.session.add(event)
+        db.session.commit()
+        invitation = Invitation(
+            event_id=event.id,
+            slack_id=slack_users[0].slack_id,
+            rsvp=RSVP.attending
+        )
+        db.session.add(invitation)
+        db.session.commit()
+
+        # Setup mock side effects
+        def event_service_get_by_id_side_effect(id):
+            if id == event.id:
+                return event
+            return None
+        event_get_by_id = MagicMock()
+        event_get_by_id.side_effect = event_service_get_by_id_side_effect
+        event_service_mock.get_by_id = event_get_by_id
+
+        # Action
+        test_return = invitation_service.update_invitation_status(event_id=invitation.event_id, user_id=invitation.slack_id, rsvp=RSVP.not_attending)
+        test_invitation = Invitation.query.get((invitation.event_id, invitation.slack_id))
+
+        # Assert
+        assert test_return is None
+        assert test_invitation.rsvp == RSVP.attending
+
