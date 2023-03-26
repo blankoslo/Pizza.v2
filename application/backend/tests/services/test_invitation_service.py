@@ -349,3 +349,31 @@ class TestInvitationServiceSuit:
         assert test_return is None
         assert test_invitation.rsvp == RSVP.attending
 
+    def test_update_reminded_at(self, slack_organizations, invitations, invitation_service):
+        team_id = slack_organizations[0].team_id
+        invitation = invitations.get(team_id)[0]
+
+        date = datetime.now(pytz.timezone('Europe/Oslo')) + timedelta(days=1)
+        invitation_service.update_reminded_at(
+            event_id=invitation.event_id,
+            slack_id=invitation.slack_id,
+            date=date.isoformat()
+        )
+
+        test_invitation = Invitation.query.get((invitation.event_id, invitation.slack_id))
+        assert test_invitation.reminded_at == date
+
+    def test_update_slack_message(self, slack_organizations, invitations, invitation_service):
+        team_id = slack_organizations[0].team_id
+        invitation = invitations.get(team_id)[0]
+
+        invitation_service.update_slack_message(
+            event_id=invitation.event_id,
+            slack_id=invitation.slack_id,
+            channel_id="dontCareChannelId",
+            ts="dontCareTs"
+        )
+
+        test_invitation = Invitation.query.get((invitation.event_id, invitation.slack_id))
+        assert test_invitation.slack_message_channel == "dontCareChannelId"
+        assert test_invitation.slack_message_ts == "dontCareTs"
