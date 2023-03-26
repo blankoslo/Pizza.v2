@@ -1,0 +1,165 @@
+import pytest
+from datetime import datetime, timedelta
+from app.services.invitation_service import InvitationService
+from app.models.event import Event
+from app.models.invitation import Invitation
+from app.models.enums import RSVP
+import pytz
+from unittest.mock import MagicMock
+
+@pytest.fixture
+def event_service_mock():
+    return MagicMock()
+
+@pytest.fixture
+def restaurant_service_mock():
+    return MagicMock()
+
+@pytest.fixture
+def invitation_service(event_service_mock, restaurant_service_mock):
+    logging_mock = MagicMock()
+    return InvitationService(logging_mock, event_service_mock, restaurant_service_mock)
+
+
+@pytest.mark.usefixtures('client_class')
+class TestInvitationServiceSuit:
+    def test_add(self, slack_organizations, events, slack_users, invitation_service):
+        team_id = slack_organizations[0].team_id
+        event = events.get(team_id)[0]
+        slack_user = slack_users.get(team_id)[0]
+
+        invitation_service.add(event_id=event.id, user_id=slack_user.slack_id)
+
+        assert Invitation.query.get((event.id, slack_user.slack_id)) is not None
+
+    def test_get(self, slack_organizations, invitations, invitation_service):
+        team_id = slack_organizations[0].team_id
+        invitations = invitations.get(team_id)
+        test_invitations = invitation_service.get(filters={}, page=1, per_page=10, team_id=team_id)
+
+        sorted_invitations = sorted(invitations, key=lambda x: (x.event_id, x.slack_id))
+        sorted_test_invitations = sorted(test_invitations[1], key=lambda x: (x.event_id, x.slack_id))
+        for x,y in zip(sorted_invitations, sorted_test_invitations):
+            assert x == y
+
+    def test_get_by_filter(self, slack_organizations, invitations, invitation_service):
+        team_id = slack_organizations[0].team_id
+        invitations = invitations.get(team_id)
+        test_invitations = invitation_service.get_by_filter(key="rsvp", value=RSVP.unanswered, team_id=team_id)
+
+        sorted_invitations = sorted(invitations, key=lambda x: (x.event_id, x.slack_id))
+        sorted_test_invitations = sorted(test_invitations, key=lambda x: (x.event_id, x.slack_id))
+        for x,y in zip(sorted_invitations, sorted_test_invitations):
+            assert x == y
+
+    def test_get_by_id(self, slack_organizations, invitations, invitation_service):
+        team_id = slack_organizations[0].team_id
+        invitation = invitations.get(team_id)[0]
+        test_invitation = invitation_service.get_by_id(id=(invitation.event_id, invitation.slack_id), team_id=team_id)
+
+        assert invitation == test_invitation
+
+    def test_get_unanswered_invitations_on_finished_events_and_set_not_attending(self, db, slack_organizations, slack_users, restaurants, invitation_service):
+        team_id = slack_organizations[0].team_id
+        restaurant = restaurants.get(team_id)[0]
+        slack_user = slack_users.get(team_id)[0]
+        event = Event(
+            time=datetime.today() + timedelta(days=-1),
+            restaurant_id=restaurant.id,
+            people_per_event=2,
+            slack_organization_id=team_id,
+            finalized=True
+        )
+        db.session.add(event)
+        db.session.commit()
+        invitation = Invitation(
+            event_id=event.id,
+            slack_id=slack_user.slack_id
+        )
+        db.session.add(invitation)
+        db.session.commit()
+
+        invitations = invitation_service.get_unanswered_invitations_on_finished_events_and_set_not_attending()
+        test_invitation = Invitation.query.get((invitation.event_id, invitation.slack_id))
+
+        assert len(invitations) == 1
+        assert test_invitation.rsvp == RSVP.not_attending
+
+    def test_update_invitation_status_accept(self, db, mock_broker, slack_organizations, slack_users, restaurants, invitation_service, event_service_mock, restaurant_service_mock):
+        # Setup data
+        team_id = slack_organizations[0].team_id
+        restaurant = restaurants.get(team_id)[0]
+        slack_users = slack_users.get(team_id)
+
+        event = Event(
+            time=datetime.today() + timedelta(days=1),
+            restaurant_id=restaurant.id,
+            people_per_event=2,
+            slack_organization_id=team_id
+        )
+        db.session.add(event)
+        db.session.commit()
+        invitation1 = Invitation(
+            event_id=event.id,
+            slack_id=slack_users[0].slack_id,
+            rsvp=RSVP.attending
+        )
+        invitation2 = Invitation(
+            event_id=event.id,
+            slack_id=slack_users[1].slack_id
+        )
+        db.session.add(invitation1)
+        db.session.add(invitation2)
+        db.session.commit()
+
+        # Setup mock side effects
+        def restaurant_service_get_by_id_side_effect(id):
+            if id == restaurant.id:
+                return restaurant
+            return None
+        def event_service_get_by_id_side_effect(id):
+            if id == event.id:
+                return event
+            return None
+        def finalize_event_if_complete_side_effect(id):
+            if id == event.id:
+                event.finalized = True
+                db.session.commit()
+                return True
+            return False
+        restaurant_get_by_id = MagicMock()
+        event_get_by_id = MagicMock()
+        finalize_event_if_complete = MagicMock()
+        restaurant_get_by_id.side_effect = restaurant_service_get_by_id_side_effect
+        event_get_by_id.side_effect = event_service_get_by_id_side_effect
+        finalize_event_if_complete.side_effect = finalize_event_if_complete_side_effect
+        restaurant_service_mock.get_by_id = restaurant_get_by_id
+        event_service_mock.get_by_id = event_get_by_id
+        event_service_mock.finalize_event_if_complete = finalize_event_if_complete
+
+        # Action
+        invitation_service.update_invitation_status(event_id=invitation2.event_id, user_id=invitation2.slack_id, rsvp=RSVP.attending)
+
+        # Get assert data
+        test_invitation = Invitation.query.get((invitation2.event_id, invitation2.slack_id))
+        test_event = Event.query.get(invitation2.event_id)
+
+        # Assert
+        assert test_invitation.rsvp is RSVP.attending
+        assert test_event.finalized is True
+        mock_broker.send.assert_called()
+        assert len(mock_broker.send.call_args_list) == 2
+        assert mock_broker.send.call_args_list[0].args[0]['type'] == 'finalization'
+        assert mock_broker.send.call_args_list[1].args[0]['type'] == 'updated_invitation'
+
+    def test_update_invitation_status_decline(self, db, slack_organizations, slack_users, restaurants, invitation_service):
+        pass
+
+    def test_update_invitation_status_unanswered(self, db, slack_organizations, slack_users, restaurants, invitation_service):
+        pass
+
+    def test_update_invitation_status_withdraw(self, db, slack_organizations, slack_users, restaurants, invitation_service):
+        pass
+
+    def test_update_invitation_status_expired(self, db, slack_organizations, slack_users, restaurants, invitation_service):
+        pass

@@ -15,6 +15,7 @@ class BrokerService:
 
     @classmethod
     def publish(cls, type, response):
+        print(broker)
         message_schema = MessageSchema()
         message = message_schema.load({
             'type': type,
