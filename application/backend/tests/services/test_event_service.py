@@ -103,7 +103,7 @@ class TestEventServiceSuit:
         assert test_event is None
         mock_broker.send.assert_called()
         assert len(mock_broker.send.call_args_list) == 1
-        assert mock_broker.send.call_args_list[0].args[0]['type'] == 'deleted_event'
+        assert mock_broker.send.call_args_list[0].kwargs['body']['type'] == 'deleted_event'
 
     def test_add(self, slack_organizations, restaurants, groups, event_service):
         team_id = slack_organizations[0].team_id
@@ -146,4 +146,4 @@ class TestEventServiceSuit:
         assert updated_event.group_id == group.id
         mock_broker.send.assert_called()
         assert len(mock_broker.send.call_args_list) == 1
-        assert mock_broker.send.call_args_list[0].args[0]['type'] == 'updated_event'
+        assert mock_broker.send.call_args_list[0].kwargs['body']['type'] == 'updated_event'

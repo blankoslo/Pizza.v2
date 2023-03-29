@@ -149,8 +149,8 @@ class TestInvitationServiceSuit:
         assert test_event.finalized is True
         mock_broker.send.assert_called()
         assert len(mock_broker.send.call_args_list) == 2
-        assert mock_broker.send.call_args_list[0].args[0]['type'] == 'finalization'
-        assert mock_broker.send.call_args_list[1].args[0]['type'] == 'updated_invitation'
+        assert mock_broker.send.call_args_list[0].kwargs['body']['type'] == 'finalization'
+        assert mock_broker.send.call_args_list[1].kwargs['body']['type'] == 'updated_invitation'
 
     def test_update_invitation_status_decline(self, db, slack_organizations, slack_users, restaurants, event_service_mock, mock_broker, invitation_service):
         # Setup data
@@ -194,7 +194,7 @@ class TestInvitationServiceSuit:
         assert test_invitation.rsvp is RSVP.not_attending
         mock_broker.send.assert_called()
         assert len(mock_broker.send.call_args_list) == 1
-        assert mock_broker.send.call_args_list[0].args[0]['type'] == 'updated_invitation'
+        assert mock_broker.send.call_args_list[0].kwargs['body']['type'] == 'updated_invitation'
 
     def test_update_invitation_status_unanswered(self, db, slack_organizations, slack_users, restaurants, event_service_mock, mock_broker, invitation_service):
         # Setup data
@@ -237,7 +237,7 @@ class TestInvitationServiceSuit:
         assert test_invitation.rsvp is RSVP.unanswered
         mock_broker.send.assert_called()
         assert len(mock_broker.send.call_args_list) == 1
-        assert mock_broker.send.call_args_list[0].args[0]['type'] == 'updated_invitation'
+        assert mock_broker.send.call_args_list[0].kwargs['body']['type'] == 'updated_invitation'
 
     def test_update_invitation_status_withdraw(self, db, slack_organizations, slack_users, restaurants, event_service_mock, restaurant_service_mock, mock_broker, invitation_service):
         # Setup data
@@ -278,7 +278,6 @@ class TestInvitationServiceSuit:
                 return event
             return None
         def unfinalize_event_side_effect(id):
-            print("inside", id, event.id)
             if id == event.id:
                 event.finalized = False
                 db.session.commit()
@@ -306,9 +305,9 @@ class TestInvitationServiceSuit:
         assert test_event.finalized is False
         mock_broker.send.assert_called()
         assert len(mock_broker.send.call_args_list) == 3
-        assert mock_broker.send.call_args_list[0].args[0]['type'] == 'user_withdrew_after_finalization'
-        assert mock_broker.send.call_args_list[1].args[0]['type'] == 'finalization'
-        assert mock_broker.send.call_args_list[2].args[0]['type'] == 'updated_invitation'
+        assert mock_broker.send.call_args_list[0].kwargs['body']['type'] == 'user_withdrew_after_finalization'
+        assert mock_broker.send.call_args_list[1].kwargs['body']['type'] == 'finalization'
+        assert mock_broker.send.call_args_list[2].kwargs['body']['type'] == 'updated_invitation'
 
     def test_update_invitation_status_expired(self, db, slack_organizations, slack_users, restaurants, event_service_mock, invitation_service):
         # Setup data
