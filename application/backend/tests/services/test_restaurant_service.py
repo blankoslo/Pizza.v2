@@ -34,8 +34,8 @@ class TestRestaurantServiceSuit:
             address="dontCareAddress"
         )
         restaurant_service.add(data=new_restaurant, team_id=team_id)
-        test_events = Restaurant.query.all()
-        assert len(test_events) == 1
+        test_restaurants = Restaurant.query.all()
+        assert len(test_restaurants) == 1
 
     def test_update(self, slack_organizations, restaurants, restaurant_service):
         team_id = slack_organizations[0].team_id

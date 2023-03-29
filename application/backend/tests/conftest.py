@@ -286,6 +286,7 @@ def invitations(db, events, slack_users, slack_organizations):
 
     db.session.add(invitation1)
     db.session.add(invitation2)
+    db.session.add(invitation3)
     db.session.commit()
     return {
         slack_organizations[0].team_id: [invitation1, invitation2],
