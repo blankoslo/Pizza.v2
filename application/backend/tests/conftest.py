@@ -57,6 +57,7 @@ def mock_broker(mocker, environment_variables):
     broker_mock = MagicMock()
     mocker.patch('app.application.broker', broker_mock)
     mocker.patch('app.services.broker.broker', broker_mock)
+    mocker.patch('app.services.broker.queue.broker', broker_mock)
     return broker_mock
 
 
