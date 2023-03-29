@@ -2,6 +2,7 @@ import pytest
 from app.services.group_service import GroupService
 from app.models.group import Group
 
+
 @pytest.fixture
 def group_service():
     return GroupService()
