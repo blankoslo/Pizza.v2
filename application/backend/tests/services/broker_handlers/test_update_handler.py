@@ -13,7 +13,7 @@ def rpc_queue(environment_variables, mock_broker):
 
 @pytest.mark.usefixtures('client_class')
 class TestUpdateHandlerSuit:
-    def test_update_invitation(self, slack_organizations, invitations, mock_broker, rpc_queue):
+    def test_update_invitation(self, db, slack_organizations, invitations, mock_broker, rpc_queue):
         invitation = invitations.get(slack_organizations[0].team_id)[0]
         reminded_at = datetime.now(pytz.timezone('Europe/Oslo')).isoformat()
         rpc_queue(routing_key="dontCareRoutingKey", body={
@@ -32,7 +32,7 @@ class TestUpdateHandlerSuit:
             }
         }, correlation_id="dontCareCorrelationId", reply_to="dontCareReplyTo")
 
-        test_invitation = Invitation.query.get((invitation.event_id, invitation.slack_id))
+        test_invitation = db.session.get(Invitation, (invitation.event_id, invitation.slack_id))
 
         mock_broker.sync_send.assert_called()
         assert test_invitation.reminded_at.isoformat() == reminded_at
@@ -42,7 +42,7 @@ class TestUpdateHandlerSuit:
         assert len(mock_broker.sync_send.call_args_list) == 1
         assert mock_broker.sync_send.call_args_list[0].kwargs['body'] == {'success': True}
 
-    def test_update_invitation_reminded_at(self, slack_organizations, invitations, mock_broker, rpc_queue):
+    def test_update_invitation_reminded_at(self, db, slack_organizations, invitations, mock_broker, rpc_queue):
         invitation = invitations.get(slack_organizations[0].team_id)[0]
         reminded_at = datetime.now(pytz.timezone('Europe/Oslo')).isoformat()
         rpc_queue(routing_key="dontCareRoutingKey", body={
@@ -56,14 +56,14 @@ class TestUpdateHandlerSuit:
             }
         }, correlation_id="dontCareCorrelationId", reply_to="dontCareReplyTo")
 
-        test_invitation = Invitation.query.get((invitation.event_id, invitation.slack_id))
+        test_invitation = db.session.get(Invitation, (invitation.event_id, invitation.slack_id))
 
         mock_broker.sync_send.assert_called()
         assert test_invitation.reminded_at.isoformat() == reminded_at
         assert len(mock_broker.sync_send.call_args_list) == 1
         assert mock_broker.sync_send.call_args_list[0].kwargs['body'] == {'success': True}
 
-    def test_update_invitation_rsvp(self, slack_organizations, invitations, mock_broker, rpc_queue):
+    def test_update_invitation_rsvp(self, db, slack_organizations, invitations, mock_broker, rpc_queue):
         invitation = invitations.get(slack_organizations[0].team_id)[0]
         rpc_queue(routing_key="dontCareRoutingKey", body={
             "type": "update_invitation",
@@ -76,14 +76,14 @@ class TestUpdateHandlerSuit:
             }
         }, correlation_id="dontCareCorrelationId", reply_to="dontCareReplyTo")
 
-        test_invitation = Invitation.query.get((invitation.event_id, invitation.slack_id))
+        test_invitation = db.session.get(Invitation, (invitation.event_id, invitation.slack_id))
 
         mock_broker.sync_send.assert_called()
         assert test_invitation.rsvp == RSVP.not_attending
         assert len(mock_broker.sync_send.call_args_list) == 1
         assert mock_broker.sync_send.call_args_list[0].kwargs['body'] == {'success': True}
 
-    def test_update_invitation_slack_message(self, slack_organizations, invitations, mock_broker, rpc_queue):
+    def test_update_invitation_slack_message(self, db, slack_organizations, invitations, mock_broker, rpc_queue):
         invitation = invitations.get(slack_organizations[0].team_id)[0]
         rpc_queue(routing_key="dontCareRoutingKey", body={
             "type": "update_invitation",
@@ -99,7 +99,7 @@ class TestUpdateHandlerSuit:
             }
         }, correlation_id="dontCareCorrelationId", reply_to="dontCareReplyTo")
 
-        test_invitation = Invitation.query.get((invitation.event_id, invitation.slack_id))
+        test_invitation = db.session.get(Invitation, (invitation.event_id, invitation.slack_id))
 
         mock_broker.sync_send.assert_called()
         assert test_invitation.slack_message.ts == "dontCareNewTs"

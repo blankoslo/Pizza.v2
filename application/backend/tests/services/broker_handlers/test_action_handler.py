@@ -118,7 +118,7 @@ class TestActionHandlerSuit:
         assert len(mock_broker.sync_send.call_args_list) == 1
         assert mock_broker.sync_send.call_args_list[0].kwargs['body'] is None
 
-    def test_set_slack_channel(self, mock_broker, rpc_queue, slack_organizations):
+    def test_set_slack_channel(self, db, mock_broker, rpc_queue, slack_organizations):
         slack_organization = slack_organizations[0]
         slack_organization_old_channel_id = slack_organization.channel_id
         rpc_queue(routing_key="dontCareRoutingKey", body={
@@ -129,7 +129,7 @@ class TestActionHandlerSuit:
             }
         }, correlation_id="dontCareCorrelationId", reply_to="dontCareReplyTo")
 
-        test_slack_organization = SlackOrganization.query.get(slack_organization.team_id)
+        test_slack_organization = db.session.get(SlackOrganization, slack_organization.team_id)
 
         assert test_slack_organization.channel_id == "newChannelId1"
         assert len(mock_broker.sync_send.call_args_list) == 1
