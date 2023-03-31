@@ -80,10 +80,12 @@ class TestActionHandlerSuit:
         mock_broker.sync_send.assert_called()
         assert len(test_invitations) == 2
         assert len(mock_broker.sync_send.call_args_list) == 1
+        mock_broker.sync_send.call_args_list[0].kwargs['body']['events'][0]['event_time'] = \
+            mock_broker.sync_send.call_args_list[0].kwargs['body']['events'][0]['event_time'].isoformat()
         assert mock_broker.sync_send.call_args_list[0].kwargs['body'] == {
             'events': [
                 {
-                    'event_time': event.time,
+                    'event_time': event.time.isoformat(),
                     'event_id': event.id,
                     'restaurant_name': restaurant.name,
                     'team_id': slack_organization.team_id,
@@ -111,7 +113,7 @@ class TestActionHandlerSuit:
 
         mock_slack_organization_service.delete.assert_called_once()
         assert len(mock_broker.sync_send.call_args_list) == 1
-        assert mock_broker.sync_send.call_args_list[0].kwargs['body'] == None
+        assert mock_broker.sync_send.call_args_list[0].kwargs['body'] is None
 
     def test_set_slack_channel(self, mock_broker, rpc_queue, slack_organizations):
         slack_organization = slack_organizations[0]
