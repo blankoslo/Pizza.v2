@@ -1,8 +1,8 @@
 import pytest
-import pytz
 from app.models.invitation import Invitation
 from app.models.enums import RSVP
 from datetime import datetime
+from tzlocal import get_localzone
 
 
 @pytest.fixture
@@ -15,7 +15,7 @@ def rpc_queue(environment_variables, mock_broker):
 class TestUpdateHandlerSuit:
     def test_update_invitation(self, db, slack_organizations, invitations, mock_broker, rpc_queue):
         invitation = invitations.get(slack_organizations[0].team_id)[0]
-        reminded_at = datetime.now(pytz.timezone('Europe/Oslo')).isoformat()
+        reminded_at = datetime.now(get_localzone()).isoformat()
         rpc_queue(routing_key="dontCareRoutingKey", body={
             "type": "update_invitation",
             "payload": {
@@ -44,7 +44,7 @@ class TestUpdateHandlerSuit:
 
     def test_update_invitation_reminded_at(self, db, slack_organizations, invitations, mock_broker, rpc_queue):
         invitation = invitations.get(slack_organizations[0].team_id)[0]
-        reminded_at = datetime.now(pytz.timezone('Europe/Oslo')).isoformat()
+        reminded_at = datetime.now(get_localzone()).isoformat()
         rpc_queue(routing_key="dontCareRoutingKey", body={
             "type": "update_invitation",
             "payload": {

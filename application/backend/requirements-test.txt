@@ -4,3 +4,4 @@ pytest-flask
 pytest-mock
 pymaybe
 psycopg
+tzlocal
