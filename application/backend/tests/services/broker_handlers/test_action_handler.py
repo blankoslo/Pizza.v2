@@ -82,6 +82,10 @@ class TestActionHandlerSuit:
         assert len(mock_broker.sync_send.call_args_list) == 1
         mock_broker.sync_send.call_args_list[0].kwargs['body']['events'][0]['event_time'] = \
             mock_broker.sync_send.call_args_list[0].kwargs['body']['events'][0]['event_time'].isoformat()
+        mock_broker.sync_send.call_args_list[0].kwargs['body']['events'][0]['invited_users'] = sorted(
+            mock_broker.sync_send.call_args_list[0].kwargs['body']['events'][0]['invited_users'],
+            key=lambda x: x
+        )
         assert mock_broker.sync_send.call_args_list[0].kwargs['body'] == {
             'events': [
                 {
