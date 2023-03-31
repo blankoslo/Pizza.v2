@@ -1,17 +1,16 @@
 import pytest
 from app.services.slack_organization_service import SlackOrganizationService
 from app.models.slack_organization import SlackOrganization
-from unittest.mock import MagicMock
 
 @pytest.fixture
-def slack_organization_service():
-    logging_mock = MagicMock()
+def slack_organization_service(mocker):
+    logging_mock = mocker.MagicMock()()
     return SlackOrganizationService(logger=logging_mock)
 
 
 @pytest.mark.usefixtures('client_class')
 class TestSlackOrganizationServiceSuit:
-    def test_get(self, slack_organizations, slack_organization_service):
+    def test_get(self, mocker, slack_organizations, slack_organization_service):
         test_slack_organizations = slack_organization_service.get()
 
         sorted_slack_organizations = sorted(slack_organizations, key=lambda x: x.team_id)
@@ -27,11 +26,11 @@ class TestSlackOrganizationServiceSuit:
     def test_delete(self, mocker, slack_organizations, slack_organization_service):
         slack_organization = slack_organizations[0]
 
-        cloudinary_mock = MagicMock()
+        cloudinary_mock = mocker.MagicMock()
 
         def delete_resources_by_tag_side_effect(tag, next_cursor):
             return {'partial': False}
-        delete_resources_by_tag = MagicMock()
+        delete_resources_by_tag = mocker.MagicMock()
         delete_resources_by_tag.side_effect = delete_resources_by_tag_side_effect
         cloudinary_mock.delete_resources_by_tag = delete_resources_by_tag
 

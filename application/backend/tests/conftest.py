@@ -16,7 +16,6 @@ from app.models.slack_user import SlackUser
 from app.models.group import Group
 from app.models.image import Image
 from sqlalchemy import text
-from unittest.mock import MagicMock
 
 database_name = "pizza"
 postgresql = factories.postgresql_proc(dbname=database_name)
@@ -56,7 +55,7 @@ def environment_variables(postgresql_url, monkeypatch):
 
 @pytest.fixture(autouse=True)
 def mock_broker(mocker, environment_variables):
-    broker_mock = MagicMock()
+    broker_mock = mocker.MagicMock()
     mocker.patch('app.application.broker', broker_mock)
     mocker.patch('app.services.broker.broker', broker_mock)
     mocker.patch('app.services.broker.queue.broker', broker_mock)

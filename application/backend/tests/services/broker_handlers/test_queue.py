@@ -1,11 +1,10 @@
 import pytest
-from unittest.mock import MagicMock
 from marshmallow import ValidationError
 
 
 @pytest.fixture
 def message_handler(mocker):
-    message_handler_mock = MagicMock()
+    message_handler_mock = mocker.MagicMock()
     mocker.patch('app.services.broker.queue.MessageHandler', message_handler_mock)
     return message_handler_mock
 
@@ -35,8 +34,8 @@ class TestBrokerQueueSuit:
         message_handler.process_message.assert_not_called()
         mock_broker.sync_send.assert_called_once()
 
-    def test_process_message_fail(self, mock_broker, message_handler, rpc_queue):
-        process_message = MagicMock()
+    def test_process_message_fail(self, mocker, mock_broker, message_handler, rpc_queue):
+        process_message = mocker.MagicMock()()
         process_message.side_effect = ValidationError("test")
         message_handler.process_message = process_message
 

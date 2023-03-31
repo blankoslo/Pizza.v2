@@ -4,14 +4,13 @@ from datetime import datetime, timedelta
 from app.models.event import Event
 from app.models.invitation import Invitation
 from app.models.enums import RSVP
-from unittest.mock import MagicMock
 from app.models.slack_organization import SlackOrganization
 from app.services.slack_organization_service import SlackOrganizationService
 
 
 @pytest.fixture
 def mock_injector(mocker, environment_variables):
-    injector_mock = MagicMock()
+    injector_mock = mocker.MagicMock()
     mocker.patch('app.services.broker.handlers.action.injector', injector_mock)
     return injector_mock
 
@@ -99,14 +98,14 @@ class TestActionHandlerSuit:
             ]
         }
 
-    def test_deleted_slack_organization_event(self, mock_injector, mock_broker, slack_organizations, rpc_queue):
-        mock_slack_organization_service = MagicMock()
+    def test_deleted_slack_organization_event(self, mocker, mock_injector, mock_broker, slack_organizations, rpc_queue):
+        mock_slack_organization_service = mocker.MagicMock()
         def get_mocked_service(bound_class):
             if bound_class == SlackOrganizationService:
                 return mock_slack_organization_service
             else:
-                return MagicMock()
-        mock_injector.get = MagicMock(side_effect=get_mocked_service)
+                return mocker.MagicMock()
+        mock_injector.get = mocker.MagicMock(side_effect=get_mocked_service)
 
         rpc_queue(routing_key="dontCareRoutingKey", body={
             "type": "deleted_slack_organization_event",
