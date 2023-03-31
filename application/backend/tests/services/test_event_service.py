@@ -60,8 +60,8 @@ class TestEventServiceSuit:
         event_service.finalize_event_if_complete(event1.id)
         event_service.finalize_event_if_complete(event2.id)
 
-        assert Event.query.get(event1.id).finalized == True
-        assert Event.query.get(event2.id).finalized == False
+        assert Event.query.get(event1.id).finalized is True
+        assert Event.query.get(event2.id).finalized is False
 
     def test_unfinalize_event(self, db, slack_organizations, restaurants, event_service):
         event1 = Event(
@@ -76,7 +76,7 @@ class TestEventServiceSuit:
 
         event_service.unfinalize_event(event1.id)
 
-        assert Event.query.get(event1.id).finalized == False
+        assert Event.query.get(event1.id).finalized is False
 
     def test_get(self, slack_organizations, events, event_service):
         team_id = slack_organizations[0].team_id
