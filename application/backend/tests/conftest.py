@@ -15,6 +15,7 @@ from app.models.invitation import Invitation
 from app.models.slack_user import SlackUser
 from app.models.group import Group
 from app.models.image import Image
+from app.db import db as _db
 from sqlalchemy import text
 
 database_name = "pizza"
@@ -78,13 +79,13 @@ def app(mock_broker):
 
 @pytest.fixture
 def db(app):
-    db = SQLAlchemy(app=app)
-    db.session.execute(text('DROP SCHEMA public CASCADE'))
-    # create the public schema
-    db.session.execute(text('CREATE SCHEMA public'))
-    # commit the changes
-    db.session.commit()
-    return db
+    with app.app_context():
+        _db.session.execute(text('DROP SCHEMA public CASCADE'))
+        # create the public schema
+        _db.session.execute(text('CREATE SCHEMA public'))
+        # commit the changes
+        _db.session.commit()
+        return _db
 
 
 @pytest.fixture(autouse=True)

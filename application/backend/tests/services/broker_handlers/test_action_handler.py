@@ -48,7 +48,7 @@ class TestActionHandlerSuit:
             }
         }, correlation_id="dontCareCorrelationId", reply_to="dontCareReplyTo")
 
-        test_invitation = Invitation.query.get((invitation.event_id, invitation.slack_id))
+        test_invitation = db.session.get(Invitation, (invitation.event_id, invitation.slack_id))
 
         mock_broker.sync_send.assert_called()
         assert test_invitation.rsvp == RSVP.not_attending
@@ -120,6 +120,7 @@ class TestActionHandlerSuit:
 
     def test_set_slack_channel(self, mock_broker, rpc_queue, slack_organizations):
         slack_organization = slack_organizations[0]
+        slack_organization_old_channel_id = slack_organization.channel_id
         rpc_queue(routing_key="dontCareRoutingKey", body={
             "type": "set_slack_channel",
             "payload": {
@@ -134,6 +135,6 @@ class TestActionHandlerSuit:
         assert len(mock_broker.sync_send.call_args_list) == 1
         assert mock_broker.sync_send.call_args_list[0].kwargs['body'] == {
             "success": True,
-            'old_channel_id': slack_organization.channel_id,
+            'old_channel_id': slack_organization_old_channel_id,
         }
 

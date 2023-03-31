@@ -35,14 +35,14 @@ class TestSlackOrganizationServiceSuit:
         cloudinary_mock.delete_resources_by_tag = delete_resources_by_tag
 
         mocker.patch("cloudinary.api", cloudinary_mock)
+        team_id = slack_organization.team_id
+        slack_organization_service.delete(team_id=team_id)
 
-        slack_organization_service.delete(team_id=slack_organization.team_id)
-
-        deleted_slack_organization = SlackOrganization.query.get(slack_organization.team_id)
+        deleted_slack_organization = SlackOrganization.query.get(team_id)
         assert deleted_slack_organization is None
         cloudinary_mock.delete_resources_by_tag.assert_called_once()
         assert len(cloudinary_mock.delete_resources_by_tag.call_args_list) == 1
-        assert cloudinary_mock.delete_resources_by_tag.call_args_list[0].kwargs['tag'] == slack_organization.team_id
+        assert cloudinary_mock.delete_resources_by_tag.call_args_list[0].kwargs['tag'] == team_id
 
     def test_upsert(self, slack_organization_service):
 

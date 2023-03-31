@@ -47,7 +47,8 @@ class TestGroupServiceSuit:
     def test_delete(self, slack_organizations, groups, group_service):
         team_id = slack_organizations[0].team_id
         group = groups.get(team_id)[0]
-        group_service.delete(group_id=group.id, team_id=team_id)
-        test_group = Group.query.get(group.id)
+        group_id = group.id
+        group_service.delete(group_id=group_id, team_id=team_id)
+        test_group = Group.query.get(group_id)
 
         assert test_group is None
