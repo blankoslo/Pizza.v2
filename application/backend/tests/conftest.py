@@ -1,5 +1,7 @@
 import pytest
 import os
+import pytz
+from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, upgrade
 from pytest_postgresql import factories
@@ -242,21 +244,22 @@ def groups(db, slack_organizations, slack_users):
 
 @pytest.fixture
 def events(db, restaurants, groups, slack_organizations):
+    date = (datetime.now(pytz.timezone('Europe/Oslo')) + timedelta(days=1)).isoformat()
     event1 = Event(
-        time="2023-03-30T16:23:05.420Z",
+        time=date,
         restaurant_id=restaurants.get(slack_organizations[0].team_id)[0].id,
         people_per_event=5,
         slack_organization_id=slack_organizations[0].team_id,
         group_id=groups.get(slack_organizations[0].team_id)[0].id
     )
     event2 = Event(
-        time="2023-04-24T16:23:05.420Z",
+        time=date,
         restaurant_id=restaurants.get(slack_organizations[0].team_id)[0].id,
         people_per_event=5,
         slack_organization_id=slack_organizations[0].team_id
     )
     event3 = Event(
-        time="2023-04-24T16:23:05.420Z",
+        time=date,
         restaurant_id=restaurants.get(slack_organizations[1].team_id)[0].id,
         people_per_event=5,
         slack_organization_id=slack_organizations[1].team_id
