@@ -1,6 +1,7 @@
 import pytest
 import os
 import pytz
+import locale
 from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, upgrade
@@ -19,6 +20,12 @@ from sqlalchemy import text
 
 database_name = "pizza"
 postgresql = factories.postgresql_proc(dbname=database_name)
+
+
+@pytest.fixture(scope='session', autouse=True)
+def europe_oslo_timezone():
+    locale.setlocale(locale.LC_TIME, 'no_NO.UTF-8')
+
 
 @pytest.fixture(scope='session')
 def postgresql_database(postgresql):
