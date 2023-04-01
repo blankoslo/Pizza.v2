@@ -8,7 +8,7 @@ from src.api.bot_api import BotApiConfiguration
 
 from src.scheduler import scheduler
 
-from src.slack import slack_handler
+from src.slack import slack_handler, register_slack_handlers
 
 from src.injector import injector, singleton
 from src.broker.amqp_connection import AmqpConnection
@@ -66,6 +66,7 @@ def main():
     scheduler.start()
 
     # Start slack app
+    register_slack_handlers()
     slack_handler.start()
 
 
