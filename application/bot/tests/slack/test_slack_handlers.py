@@ -13,7 +13,6 @@ def mock_bot_api(mocker, mock_injector, environment_variables):
 def mock_injected_bot_api(mocker, mock_bot_api, mock_injector):
     mock_bot_api_instance = mocker.MagicMock()
     def side_effect(inject_class):
-        print(mock_bot_api, inject_class, mock_bot_api == inject_class)
         if mock_bot_api == inject_class:
             return mock_bot_api_instance
         elif logging.Logger == inject_class:
@@ -329,7 +328,6 @@ class TestSlackHandlersSuit:
         mock_injected_entered_bot_api.join_channel.assert_called_once()
         mock_injected_entered_bot_api.send_slack_message.assert_called_once()
         assert len(mock_injected_entered_bot_api.send_slack_message.call_args_list) == 1
-        print(mock_injected_entered_bot_api.send_slack_message.call_args_list[0].kwargs)
         assert mock_injected_entered_bot_api.send_slack_message.call_args_list[0].kwargs['channel_id'] == 'someNewChannel'
 
     def test_handle_set_channel_command_failure(self, mocker, mock_injected_entered_bot_api):
