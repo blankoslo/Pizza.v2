@@ -26,11 +26,8 @@ def handle_rsvp(body, ack, attending, client):
     event_id = body["actions"][0]["value"]
     blocks = message["blocks"][0:3]
     # Use bot client outside `with` to not get slowed down by getting a connection
-    print(BotApi)
-    print(injector)
     bot_client = injector.get(BotApi)
     # Send loading message and acknowledge the slack request
-    print(bot_client)
     bot_client.send_pizza_invite_loading(channel_id=channel_id, ts=ts, old_blocks=blocks, event_id=event_id, slack_client=client)
     ack()
     with bot_client as ba:
