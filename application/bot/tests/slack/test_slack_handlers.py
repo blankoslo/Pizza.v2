@@ -352,7 +352,6 @@ class TestSlackHandlersSuit:
         mock_injected_entered_bot_api.join_channel.assert_called_once()
         mock_injected_entered_bot_api.send_slack_message.assert_called_once()
         assert len(mock_injected_entered_bot_api.send_slack_message.call_args_list) == 1
-        print(mock_injected_entered_bot_api.send_slack_message.call_args_list[0].kwargs)
         assert mock_injected_entered_bot_api.send_slack_message.call_args_list[0].kwargs['channel_id'] == 'someChannelId'
 
 
