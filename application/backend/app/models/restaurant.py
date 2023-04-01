@@ -4,13 +4,12 @@ from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy.orm import relationship
 from sqlalchemy import func, select
 from app.db import db
-from app.models.mixins import get_field, CrudMixin
 from app.models.rating import Rating
 
 from app.models.soft_delete import QueryWithSoftDelete
 
 
-class Restaurant(CrudMixin, db.Model):
+class Restaurant(db.Model):
     __tablename__ = "restaurants"
     id = sa.Column(UUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()"))
     name = sa.Column(sa.String, nullable=False)
