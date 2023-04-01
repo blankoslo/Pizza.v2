@@ -1,10 +1,9 @@
-import os
 import pytz
 from datetime import datetime
 from flask import current_app
 
 from app.models.event import Event
-from app.models.restaurant import Restaurant
+from app.repositories.restaurant_repository import RestaurantRepository
 from app.repositories.group_repository import GroupRepository
 from app.repositories.invitation_repository import InvitationRepository
 from app.models.event_schema import EventSchema
@@ -88,7 +87,7 @@ class EventService:
     def add(self, data, team_id):
         data.slack_organization_id = team_id
 
-        restaurant = Restaurant.get_by_id(data.restaurant_id)
+        restaurant = RestaurantRepository.get_by_id(data.restaurant_id)
 
         if restaurant.slack_organization_id != team_id:
             return None
@@ -110,7 +109,7 @@ class EventService:
         old_restaurant_name = event.restaurant.name
 
         if 'restaurant_id' in data:
-            new_restaurant = Restaurant.get_by_id(data['restaurant_id'])
+            new_restaurant = RestaurantRepository.get_by_id(data['restaurant_id'])
             if new_restaurant.slack_organization_id != team_id:
                 return None
 
