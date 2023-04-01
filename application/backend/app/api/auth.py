@@ -12,16 +12,9 @@ from app.services.injector import injector
 bp = Blueprint("auth", "auth", url_prefix="/auth", description="Authentication")
 
 
-def get_slack_user_info(token):
-    response = requests.post("https://slack.com/api/users.identity", headers={"Authorization": f"Bearer {token}"})
-
-    if response.status_code == 200:
-        return response.json()
-    else:
-        abort(400, message=f"Failed to retrieve Slack user info: {response.json()['error']}")
-
 def get_slack_provider_cfg():
     return requests.get(current_app.config["SLACK_DISCOVERY_URL"]).json()
+
 
 @bp.route("/refresh")
 class Auth(views.MethodView):
@@ -38,6 +31,7 @@ class Auth(views.MethodView):
 
     access_token = create_access_token(identity=user, additional_claims=additional_claims)
     return jsonify(access_token=access_token)
+
 
 @bp.route("/login")
 class Auth(views.MethodView):
@@ -56,6 +50,7 @@ class Auth(views.MethodView):
         return jsonify({
             'auth_url': request_uri
         })
+
 
 @bp.route("/login/callback")
 class Auth(views.MethodView):
