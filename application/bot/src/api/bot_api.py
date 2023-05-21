@@ -144,7 +144,7 @@ class BotApi:
                 else:
                     self.logger.warning("failed to update invitation")
 
-    def send_event_finalized(self, timestamp, restaurant_name, slack_ids, channel_id, slack_client):
+    def send_event_finalized(self, timestamp, restaurant_name, team_name, slack_ids, channel_id, slack_client):
         self.logger.info("Finalizing event %s %s", timestamp, restaurant_name)
         # Convert timestamp to Norwegian timestamp
         timestamp = pytz.utc.localize(timestamp.replace(tzinfo=None), is_dst=None).astimezone(self.timezone)
@@ -158,7 +158,7 @@ class BotApi:
         # Send the finalization Slack message
         slack_client.send_slack_message(
             channel_id=channel_id,
-            text="Halloi! %s! Dere skal spise 🍕 på %s, %s. %s booker bord, og %s legger ut for maten. Blank betaler!" % (ids_string, restaurant_name, timestamp.strftime("%A %d. %B kl %H:%M"), booker, payer)
+            text="Halloi! %s! Dere skal spise 🍕 på %s, %s. %s booker bord, og %s legger ut for maten. %s betaler!" % (ids_string, restaurant_name, timestamp.strftime("%A %d. %B kl %H:%M"), booker, payer, team_name)
         )
 
     def send_event_unfinalized(self, timestamp, restaurant_name, slack_ids, channel_id, slack_client):
