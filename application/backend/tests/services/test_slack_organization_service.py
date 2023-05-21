@@ -48,6 +48,7 @@ class TestSlackOrganizationServiceSuit:
 
         new_slack_organization = SlackOrganization(
             team_id="dontCareNewTeamId",
+            team_name="dontCareNewTeamName",
             app_id="dontCareAppId",
             bot_user_id="dontCareBotUserId",
             access_token="dontCareAccessToken"
