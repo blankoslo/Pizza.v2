@@ -80,7 +80,7 @@ class AmqpConnection:
             self.connect()
             self.setup_queues()
         try:
-            self.channel.basic_consume(queue=self.queue, auto_ack=True, on_message_callback=on_message)
+            self.channel.basic_consume(queue=self.queue, on_message_callback=on_message)
             self.channel.start_consuming()
         except pika.exceptions.ChannelClosedByBroker:
             self.logger.warning('Channel Closed By Broker Exception')
