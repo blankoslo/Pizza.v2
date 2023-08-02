@@ -100,6 +100,7 @@ def migrate(app, db):
 def slack_organizations(app, db, migrate):
     slack_organization1 = SlackOrganization(
         team_id="testSlackOrganizationId1",
+        team_name="testSlackOrganization1",
         access_token="dontCareBotToken",
         channel_id="dontCareChannelId",
         app_id="dontCareAppId",
@@ -107,6 +108,7 @@ def slack_organizations(app, db, migrate):
     )
     slack_organization2 = SlackOrganization(
         team_id="testSlackOrganizationId2",
+        team_name="testSlackOrganization2",
         access_token="dontCareBotToken",
         channel_id="dontCareChannelId",
         app_id="dontCareAppId",

@@ -163,6 +163,7 @@ class InvitationService:
                 'restaurant_name': restaurant.name,
                 'slack_ids': attending_users,
                 'team_id': event.slack_organization.team_id,
+                'team_name': event.slack_organization.team_name,
                 'bot_token': event.slack_organization.access_token,
                 'channel_id': event.slack_organization.channel_id
             })
@@ -191,6 +192,7 @@ class InvitationService:
                 'restaurant_name': restaurant.name,
                 'slack_ids': [user[0] for user in InvitationRepository.get_attending_users(event.id)],
                 'team_id': event.slack_organization.team_id,
+                'team_name': event.slack_organization.team_name,
                 'bot_token': event.slack_organization.access_token,
                 'channel_id': event.slack_organization.channel_id
             })

@@ -12,6 +12,7 @@ def withdraw_invitation(event: dict):
             ba.send_event_finalized(
                 timestamp=event['timestamp'],
                 restaurant_name=event['restaurant_name'],
+                team_name=event["team_name"],
                 slack_ids=event['slack_ids'],
                 channel_id=event["channel_id"],
                 slack_client=slack_client
@@ -20,6 +21,7 @@ def withdraw_invitation(event: dict):
             ba.send_event_unfinalized(
                 timestamp=event['timestamp'],
                 restaurant_name=event['restaurant_name'],
+                team_name=event["team_name"],
                 slack_ids=event['slack_ids'],
                 channel_id=event["channel_id"],
                 slack_client=slack_client

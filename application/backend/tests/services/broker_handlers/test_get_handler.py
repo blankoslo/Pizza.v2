@@ -95,6 +95,7 @@ class TestGetHandlerSuit:
         assert len(mock_broker.sync_send.call_args_list) == 1
         assert mock_broker.sync_send.call_args_list[0].kwargs['body'] == {
             'team_id': slack_organization.team_id,
+            'team_name': slack_organization.team_name,
             'app_id': slack_organization.app_id,
             'bot_user_id': slack_organization.bot_user_id,
             'access_token': slack_organization.access_token
