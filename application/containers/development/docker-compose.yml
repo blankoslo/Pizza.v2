@@ -59,16 +59,13 @@ services:
       DB_PASSWD: "postgres"
       DB_PORT: "5432"
       DAYS_IN_ADVANCE_TO_INVITE: 10
-      <<: *common-variables
-      <<: *common-rabbitmq-variables
+      <<: [*common-variables, *common-rabbitmq-variables, *common-slack-variables, *common-cloudinary-variables]
       SECRET_KEY: "V3ryS3cr3tK3y"
       FLASK_ENV: "production"
       FLASK_APP: "main.py"
       FLASK_RUN_HOST: "0.0.0.0"
       FLASK_RUN_PORT: "3000"
       FRONTEND_URI: "https://localhost"
-      <<: *common-slack-variables
-      <<: *common-cloudinary-variables
     networks:
       - database-network
       - proxy-network
@@ -80,9 +77,7 @@ services:
     volumes:
       - ../../bot:/srv/bot
     environment:
-      <<: *common-variables
-      <<: *common-rabbitmq-variables
-      <<: *common-slack-variables
+      <<: [*common-variables, *common-rabbitmq-variables, *common-slack-variables]
       REPLY_DEADLINE_IN_HOURS: 24
       HOURS_BETWEEN_REMINDERS: 4
     restart: always
