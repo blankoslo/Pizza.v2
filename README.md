@@ -41,6 +41,8 @@ As we use Ouath2 for authentication we are forced to use https. Nginx needs vali
 ### Good to know
 Locales doesnt work properly in the alpine container used, meaning it's not a bug if stuff is localized wrong, such as the time string send in pizza event invites.
 
+If Docker Compose tells you that you have an syntax error in the compose file, upgrading to a newer version of Docker Compose might help. [>2.17]("https://github.com/docker/compose/issues/10411").
+
 ### Production
 #### Terraform Cloud
 This repository is connected to Terraform Cloud where it is automatically planned and then manually applied whenever a new tag is created.
