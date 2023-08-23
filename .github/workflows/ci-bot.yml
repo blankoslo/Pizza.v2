@@ -1,16 +1,16 @@
-name: Build and Test
+name: Build and Test Bot
 on:
   pull_request:
     types: [ opened, synchronize, reopened, closed ]
     branches:
       - main
     paths:
-      - 'application/backend/**'
+      - 'application/bot/**'
   push:
     branches:
       - main
     paths:
-      - 'application/backend/**'
+      - 'application/bot/**'
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -22,11 +22,11 @@ jobs:
         with:
           python-version: 3.9.13
       - name: Install dependencies
-        working-directory: application/backend
+        working-directory: application/bot
         run: pip install -r requirements.txt
       - name: Install test dependencies
-        working-directory: application/backend
+        working-directory: application/bot
         run: pip install -r requirements-test.txt
       - name: Run Pytest
-        working-directory: application/backend
+        working-directory: application/bot
         run: pytest tests
